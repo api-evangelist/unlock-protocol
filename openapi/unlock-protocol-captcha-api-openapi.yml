@@ -1,0 +1,104 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Captcha API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Captcha
+paths:
+  /api/captcha:
+    get:
+      operationId: getDataForRecipientsAndCaptcha
+      security:
+      - User: []
+      description: Retrieves data for recipients and captcha.
+      parameters:
+      - name: recipients[]
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: captchaValue
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: lockAddress
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: network
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  signer:
+                    type: string
+                  signatures:
+                    type: array
+                    items:
+                      type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Captcha
+components:
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    400.BadRequest:
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Bad request due to invalid input.
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

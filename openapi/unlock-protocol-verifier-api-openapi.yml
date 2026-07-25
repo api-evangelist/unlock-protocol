@@ -1,0 +1,249 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Verifier API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Verifier
+paths:
+  /v2/api/verifier/list/{network}/{lockAddress}:
+    get:
+      deprecated: true
+      operationId: verifiers
+      security:
+      - User:
+        - lockManager
+      description: List of verifiers for the lock address. (deprecated in favor of eventVerifiers)
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: list of verifier address.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+        204:
+          $ref: '#/components/responses/204.Empty'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Verifier
+  /v2/api/verifier/{network}/{lockAddress}/{verifierAddress}:
+    put:
+      deprecated: true
+      operationId: createVerifier
+      security:
+      - User:
+        - lockManager
+      description: Create verifier. (deprecated in favor of addEventVerifier)
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/VerifierAddress'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verifierName:
+                  type: string
+                  description: optional verifier name
+      responses:
+        201:
+          description: Added verifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verifier'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        409:
+          $ref: '#/components/responses/409.Conflict'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Verifier
+    delete:
+      deprecated: true
+      operationId: deleteVerifier
+      security:
+      - User: []
+      description: Remove verifier. (deprecated in favor of deleteEventVerifier)
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/VerifierAddress'
+      responses:
+        200:
+          description: List of remaining verifiers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Verifier
+  /v2/api/verifier/{network}/lock/{lockAddress}/address/{verifierAddress}:
+    get:
+      deprecated: true
+      operationId: verifier
+      security:
+      - User:
+        - lockManager
+      description: Check if an address is a verifier of the lock. (deprecated in favor of eventVerifier)
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/VerifierAddress'
+      responses:
+        200:
+          description: Address is a verifier on the lock address.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                    default: true
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Verifier
+components:
+  responses:
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    204.Empty:
+      description: No response. Request acknowledged.
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    VerifierAddress:
+      in: path
+      name: verifierAddress
+      required: true
+      description: User address to use as verifier
+      schema:
+        type: string
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+    NotAuthenticated:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+          nullable: false
+    Verifier:
+      type: object
+      nullable: false
+      required:
+      - address
+      properties:
+        address:
+          type: string
+          nullable: false
+        lockAddress:
+          type: string
+          nullable: false
+        lockManager:
+          type: string
+          nullable: false
+        network:
+          type: integer
+          nullable: false
+        name:
+          type: string
+          nullable: true
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: resource not found
+          nullable: false
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

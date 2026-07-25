@@ -1,0 +1,238 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Applications
+paths:
+  /v2/applications/list:
+    get:
+      operationId: applications
+      security:
+      - User: []
+      description: List applications created the user.
+      responses:
+        200:
+          description: List of applications owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Application'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Applications
+  /v2/applications:
+    post:
+      operationId: createApplication
+      security:
+      - User: []
+      description: Create application associated with user wallet.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationBody'
+      responses:
+        201:
+          description: Created application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Applications
+  /v2/applications/:id:
+    delete:
+      operationId: deleteApplication
+      security:
+      - User: []
+      description: Delete application by id.
+      parameters:
+      - in: path
+        required: true
+        schema:
+          type: string
+        name: id
+        description: Application id.
+      responses:
+        200:
+          description: Deleted application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccess'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Applications
+    put:
+      parameters:
+      - in: path
+        required: true
+        schema:
+          type: string
+        name: id
+        description: Application id.
+      operationId: updateApplication
+      security:
+      - User: []
+      description: Update application by id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationBody'
+      responses:
+        200:
+          description: Updated application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Applications
+components:
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+          nullable: false
+        error:
+          type: string
+          nullable: true
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+    ApplicationBody:
+      type: object
+      nullable: false
+      properties:
+        name:
+          type: string
+          nullable: false
+        key:
+          type: string
+          nullable: true
+        walletAddress:
+          type: string
+          nullable: false
+    NotAuthenticated:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+          nullable: false
+    GenericSuccess:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Successfully fulfilled the request.
+          nullable: false
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: resource not found
+          nullable: false
+    Application:
+      type: object
+      nullable: false
+      properties:
+        id:
+          type: number
+          nullable: false
+        name:
+          type: string
+          nullable: false
+        key:
+          type: string
+          nullable: true
+        walletAddress:
+          type: string
+          nullable: false
+  responses:
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Price API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Price
+paths:
+  /v2/api/{network}/price:
+    get:
+      operationId: price
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - in: query
+        name: amount
+        required: false
+        description: Amount of tokens you want to get the price for in USD.
+        schema:
+          type: number
+      - in: query
+        name: address
+        required: false
+        description: The erc20 address you want to get the price for. If nothing is passed, the API will return the native token price.
+        schema:
+          type: string
+      responses:
+        200:
+          description: Get price for the native token or any erc20 on the network.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      decimals:
+                        type: number
+                        nullable: true
+                      price:
+                        type: number
+                      timestamp:
+                        type: number
+                      symbol:
+                        type: string
+                      confidence:
+                        type: number
+                      priceInAmount:
+                        type: number
+                        nullable: true
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Price
+components:
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

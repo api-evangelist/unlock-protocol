@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Contracts API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Contracts
+paths:
+  /v2/api/contracts/{network}/lock:
+    post:
+      operationId: createLockContract
+      security:
+      - User: []
+      - Application: []
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - name: captcha
+        in: header
+        required: true
+        description: Recaptcha value to pass.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockContractOptions'
+      responses:
+        201:
+          description: Transaction hash of the lock creation transaction.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionHash:
+                    type: string
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Contracts
+components:
+  responses:
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  schemas:
+    LockContractOptions:
+      type: object
+      nullable: false
+      properties:
+        name:
+          type: string
+        expirationDuration:
+          type: string
+          nullable: true
+        maxNumberOfKeys:
+          type: string
+          nullable: true
+        keyPrice:
+          type: string
+        creator:
+          type: string
+          nullable: true
+        currencyContractAddress:
+          type: string
+          nullable: true
+        publicLockVersion:
+          type: number
+          nullable: true
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: resource not found
+          nullable: false
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

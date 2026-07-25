@@ -1,0 +1,259 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Rsvp API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Rsvp
+paths:
+  /v2/rsvp/{network}/{lockAddress}:
+    post:
+      operationId: rsvp
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - name: captcha
+        in: header
+        required: true
+        description: Recaptcha value to pass.
+        schema:
+          type: string
+      description: User applies to attend an event.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient:
+                  type: string
+                email:
+                  type: string
+                data:
+                  type: object
+                  additionalProperties: true
+      responses:
+        200:
+          description: Successfully applied to event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Rsvp
+  /v2/rsvp/{network}/{lockAddress}/approve/{userAddress}:
+    post:
+      deprecated: true
+      operationId: approveRsvp
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/UserAddress'
+      description: Approves a user to attend an event. (does not airdrop!)
+      responses:
+        200:
+          description: Successfully approves the user to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Rsvp
+  /v2/rsvp/{network}/{lockAddress}/deny/{userAddress}:
+    post:
+      deprecated: true
+      operationId: denyRsvp
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/UserAddress'
+      description: Denies a user to attend an event. (does not airdrop!)
+      responses:
+        200:
+          description: Successfully denied the user to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Rsvp
+  /v2/rsvp/{network}/{lockAddress}/approve:
+    post:
+      operationId: approveAttendeesRsvp
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+      description: Approves users to attend an event. (does not airdrop!)
+      responses:
+        200:
+          description: Successfully approves the users to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Rsvp
+  /v2/rsvp/{network}/{lockAddress}/deny:
+    post:
+      operationId: denyAttendeesRsvp
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+      description: Denies users to attend an event.
+      responses:
+        200:
+          description: Successfully denied users to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Rsvp
+components:
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+          nullable: false
+        error:
+          type: string
+          nullable: true
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: resource not found
+          nullable: false
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+    Rsvp:
+      type: object
+      nullable: false
+      properties:
+        lockAddress:
+          type: string
+        userAddress:
+          type: string
+        approval:
+          type: string
+        network:
+          type: number
+  responses:
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    UserAddress:
+      in: path
+      name: userAddress
+      required: true
+      description: User address.
+      schema:
+        type: string
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

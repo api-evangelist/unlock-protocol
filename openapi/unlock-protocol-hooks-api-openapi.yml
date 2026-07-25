@@ -1,0 +1,99 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Hooks API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Hooks
+paths:
+  /v2/hooks/guild:
+    get:
+      operationId: getDataForRecipientsAndGuild
+      description: Get the data for recipients and guild. This is to be used in conjunction with the Guild
+      parameters:
+      - in: query
+        name: network
+        required: true
+        description: The network the lock is on
+        schema:
+          type: number
+      - in: query
+        name: lockAddress
+        description: The address of the lock
+        schema:
+          type: string
+      - in: query
+        name: recipients
+        description: The list of recipients for the purchase
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: the list of data inputs to use for the transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: string
+      tags:
+      - Hooks
+  /v2/hooks/gitcoin:
+    get:
+      operationId: getDataForRecipientsAndGitcoinPassport
+      description: Get the data for recipients and gitcoin passport. This is to be used in conjunction with the Gitcoin passport scorer.
+      parameters:
+      - in: query
+        name: network
+        required: true
+        description: The network the lock is on
+        schema:
+          type: number
+      - in: query
+        name: lockAddress
+        description: The address of the lock
+        schema:
+          type: string
+      - in: query
+        name: recipients
+        description: The list of recipients for the purchase
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: the list of data inputs to use for the transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: string
+      tags:
+      - Hooks
+components:
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

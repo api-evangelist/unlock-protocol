@@ -1,0 +1,647 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Events API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Events
+paths:
+  /v2/events/{slug}/verifiers:
+    get:
+      operationId: eventVerifiers
+      security:
+      - User:
+        - lockManager
+      description: List of verifiers for an event.
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      responses:
+        200:
+          description: List of verifier addresses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+        204:
+          $ref: '#/components/responses/204.Empty'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+  /v2/events/{slug}/verifiers/{verifierAddress}:
+    put:
+      operationId: addEventVerifier
+      security:
+      - User:
+        - lockManager
+      description: Adds a verifier for an event.
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      - $ref: '#/components/parameters/VerifierAddress'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verifierName:
+                  type: string
+                  description: optional verifier name
+      responses:
+        201:
+          description: Added verifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verifier'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        409:
+          $ref: '#/components/responses/409.Conflict'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+    delete:
+      operationId: deleteEventVerifier
+      security:
+      - User: []
+      description: Removes a verifier for an event.
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      - $ref: '#/components/parameters/VerifierAddress'
+      responses:
+        200:
+          description: List of remaining verifiers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+  /v2/events/{slug}/approve-refunds:
+    post:
+      operationId: approveRefunds
+      security:
+      - User:
+        - lockManager
+      description: Approves refunds for an event.
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - amount
+              - network
+              properties:
+                amount:
+                  type: number
+                  nullable: false
+                currency:
+                  type: string
+                  nullable: true
+                network:
+                  type: number
+                  nullable: false
+      responses:
+        201:
+          description: Approves refunds for an event.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - format
+                - tree
+                - values
+                properties:
+                  format:
+                    type: string
+                    nullable: false
+                  values:
+                    type: array
+                    items:
+                      type: object
+                  tree:
+                    type: array
+                    items:
+                      type: string
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+  /v2/events/approved-refunds/{slug}:
+    get:
+      operationId: approvedRefunds
+      description: Returns the merkle proof of an approved refund.
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      responses:
+        200:
+          description: The merkle proof of an approved refund.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - format
+                - tree
+                - values
+                properties:
+                  format:
+                    type: string
+                    enum:
+                    - standard-v1
+                    nullable: false
+                  leafEncoding:
+                    type: array
+                    items:
+                      type: string
+                    nullable: false
+                  values:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: array
+                          items: {}
+                          nullable: false
+                        treeIndex:
+                          type: number
+                  tree:
+                    type: array
+                    items:
+                      type: string
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+  /v2/events/{network}/{lockAddress}:
+    get:
+      deprecated: true
+      operationId: getEventDetails
+      description: Get the event details from lock
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully get event details by lock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetails'
+      tags:
+      - Events
+  /v2/events/save:
+    post:
+      operationId: saveEventData
+      security:
+      - User: []
+      description: Save event data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  additionalProperties: true
+                status:
+                  type: string
+                  enum:
+                  - pending
+                  - deployed
+                transactionHash:
+                  type: string
+                checkoutConfig:
+                  $ref: '#/components/schemas/CheckoutConfig'
+      responses:
+        201:
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+  /v2/events/update/{slug}:
+    post:
+      operationId: updateEventData
+      security:
+      - User: []
+      description: Update event data
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                  - pending
+                  - deployed
+                transactionHash:
+                  type: string
+                checkoutConfig:
+                  $ref: '#/components/schemas/CheckoutConfig'
+      responses:
+        200:
+          description: Successfully updated event data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slug:
+                    type: string
+                  status:
+                    type: string
+                  transactionHash:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+      tags:
+      - Events
+  /v2/events/{slug}:
+    get:
+      operationId: getEvent
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      description: Retrieves an event based on its slug. The event data including status and transactionHash can be accessed through the `data` property.
+      responses:
+        200:
+          description: Successfully retrieves the event along with its checkout config. Event details including status and transactionHash are nested under the `data` property.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  data:
+                    $ref: '#/components/schemas/Event'
+                  checkoutConfig:
+                    $ref: '#/components/schemas/CheckoutConfig'
+                  slug:
+                    type: string
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+  /v2/events/external/save:
+    post:
+      operationId: saveExternalEventData
+      security:
+      - User: []
+      description: Save external event data that is not associated with an Unlock lock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - title
+              - description
+              - url
+              - image
+              - ticket
+              properties:
+                title:
+                  type: string
+                  description: The title of the external event
+                description:
+                  type: string
+                  description: Description of the external event
+                url:
+                  type: string
+                  description: URL to the external event's website
+                image:
+                  type: string
+                  description: URL to an image representing the event
+                ticket:
+                  type: object
+                  required:
+                  - event_start_date
+                  - event_start_time
+                  - event_end_date
+                  - event_end_time
+                  - event_timezone
+                  - event_is_in_person
+                  - event_address
+                  - event_location
+                  properties:
+                    event_start_date:
+                      type: string
+                      description: Start date in YYYY-MM-DD format
+                    event_start_time:
+                      type: string
+                      description: Start time in HH:MM format
+                    event_end_date:
+                      type: string
+                      description: End date in YYYY-MM-DD format
+                    event_end_time:
+                      type: string
+                      description: End time in HH:MM format
+                    event_timezone:
+                      type: string
+                      description: Timezone for the event
+                    event_is_in_person:
+                      type: boolean
+                      description: Whether the event is in-person or virtual
+                    event_address:
+                      type: string
+                      description: Address for the event (physical address or URL for virtual events)
+                    event_location:
+                      type: string
+                      description: Human-readable location information
+      responses:
+        201:
+          description: External event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Events
+components:
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+          nullable: false
+        error:
+          type: string
+          nullable: true
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: resource not found
+          nullable: false
+    Event:
+      type: object
+      required:
+      - name
+      - slug
+      - image
+      - description
+      - attributes
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - pending
+          - deployed
+        transactionHash:
+          type: string
+        eventType:
+          type: string
+          enum:
+          - unlock
+          - external
+          default: unlock
+        attributes:
+          type: array
+          items:
+            type: object
+            required:
+            - trait_type
+            - value
+            properties:
+              trait_type:
+                type: string
+              value:
+                type: string
+    NotAuthenticated:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+          nullable: false
+    CheckoutConfig:
+      type: object
+      required:
+      - config
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        by:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+          required:
+          - locks
+          properties:
+            locks:
+              type: object
+              additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Verifier:
+      type: object
+      nullable: false
+      required:
+      - address
+      properties:
+        address:
+          type: string
+          nullable: false
+        lockAddress:
+          type: string
+          nullable: false
+        lockManager:
+          type: string
+          nullable: false
+        network:
+          type: integer
+          nullable: false
+        name:
+          type: string
+          nullable: true
+    EventDetails:
+      type: object
+      nullable: false
+      properties:
+        eventName:
+          type: string
+        eventDescription:
+          type: string
+        eventDate:
+          type: string
+        eventTime:
+          type: string
+        eventAddress:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        eventUrl:
+          type: string
+  responses:
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    204.Empty:
+      description: No response. Request acknowledged.
+  parameters:
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
+    VerifierAddress:
+      in: path
+      name: verifierAddress
+      required: true
+      description: User address to use as verifier
+      schema:
+        type: string
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

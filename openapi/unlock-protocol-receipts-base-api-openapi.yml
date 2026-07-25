@@ -1,0 +1,163 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Receipts Base API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Receipts Base
+paths:
+  /v2/receipts-base/{network}/{lockAddress}:
+    get:
+      operationId: getReceiptsBase
+      security:
+      - User: []
+      description: Get supplier details
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully get supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  supplierName:
+                    type: string
+                  vat:
+                    type: string
+                  vatBasisPointsRate:
+                    type: number
+                  servicePerformed:
+                    type: string
+                  addressLine1:
+                    type: string
+                  addressLine2:
+                    type: string
+                  city:
+                    type: string
+                  state:
+                    type: string
+                  zip:
+                    type: string
+                  country:
+                    type: string
+        204:
+          description: No receipts found
+        500:
+          description: Failed to retrieve supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        404:
+          description: Impossible to retrieve supplier details.
+      tags:
+      - Receipts Base
+    post:
+      operationId: saveReceiptsBase
+      security:
+      - User: []
+      description: Create supplier details.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully creates supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  supplierName:
+                    type: string
+                  vat:
+                    type: string
+                  vatBasisPointsRate:
+                    type: number
+                  servicePerformed:
+                    type: string
+                  addressLine1:
+                    type: string
+                  addressLine2:
+                    type: string
+                  city:
+                    type: string
+                  state:
+                    type: string
+                  zip:
+                    type: string
+                  country:
+                    type: string
+        500:
+          description: Failed to update or create supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Receipts Base
+components:
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

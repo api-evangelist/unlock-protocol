@@ -1,0 +1,420 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Receipts API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Receipts
+paths:
+  /v2/receipts/all/{network}/{lockAddress}:
+    get:
+      operationId: getReceiptsStatus
+      security:
+      - User: []
+      description: Retrieve the status of receipt generation for a lock.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully retrieved receipt generation status.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - result
+                - createdAt
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        payload:
+                          type: object
+                          properties:
+                            status:
+                              type: string
+                              enum:
+                              - pending
+                              - success
+                              - failed
+                            key:
+                              type: string
+                            result:
+                              type: array
+                              items:
+                                type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        404:
+          description: No receipt generation status found.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+      tags:
+      - Receipts
+    post:
+      operationId: createDownloadReceiptsRequest
+      security:
+      - User: []
+      description: Request the creation of a ZIP file containing all receipts for a lock.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Receipt generation initiated or already pending.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - pending
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+      tags:
+      - Receipts
+  /v2/receipts/download/{network}/{lockAddress}:
+    get:
+      operationId: downloadReceipts
+      security:
+      - User: []
+      description: Download the ZIP file containing all receipts for a lock.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully downloaded the ZIP file.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        404:
+          description: ZIP file not found or not generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+      tags:
+      - Receipts
+  /v2/receipts/{network}/{lockAddress}/all:
+    get:
+      operationId: getReceipts
+      security:
+      - User: []
+      description: Get all receipts for a lock
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully retrieved receipts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        receiptNumber:
+                          type: string
+                        timestamp:
+                          type: string
+                        sender:
+                          type: string
+                        payer:
+                          type: string
+                        recipient:
+                          type: string
+                        lockAddress:
+                          type: string
+                        tokenAddress:
+                          type: string
+                        gasTotal:
+                          type: string
+                        amountTransferred:
+                          type: string
+                        network:
+                          type: number
+                        supplierAddress:
+                          type: string
+        500:
+          description: Failed to retrieve receipt details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        404:
+          description: Impossible to retrieve receipt details.
+      tags:
+      - Receipts
+  /v2/receipts/{network}/{lockAddress}/{hash}:
+    get:
+      operationId: getReceipt
+      security:
+      - User: []
+      description: Get receipt details
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/Hash'
+      responses:
+        200:
+          description: Successfully receipt details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  purchaser:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      fullname:
+                        type: string
+                      businessName:
+                        type: string
+                      addressLine1:
+                        type: string
+                      addressLine2:
+                        type: string
+                      city:
+                        type: string
+                      state:
+                        type: string
+                      zip:
+                        type: string
+                      country:
+                        type: string
+                  supplier:
+                    type: object
+                    properties:
+                      supplierName:
+                        type: string
+                      vat:
+                        type: string
+                      servicePerformed:
+                        type: string
+                      addressLine1:
+                        type: string
+                      addressLine2:
+                        type: string
+                      city:
+                        type: string
+                      state:
+                        type: string
+                      zip:
+                        type: string
+                      country:
+                        type: string
+                  receipt:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      timestamp:
+                        type: number
+                      sender:
+                        type: string
+                      payer:
+                        type: string
+                      recipient:
+                        type: string
+                      lockAddress:
+                        type: string
+                      tokenAddress:
+                        type: string
+                      gasTotal:
+                        type: number
+                      amountTransferred:
+                        type: number
+        500:
+          description: Failed to retrieve receipt details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        404:
+          description: Impossible to retrieve receipt details.
+      tags:
+      - Receipts
+    post:
+      operationId: saveReceipt
+      security:
+      - User: []
+      description: Create purchaser details
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/Hash'
+      responses:
+        200:
+          description: Successfully creates purchaser details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fullname:
+                    type: string
+                  businessName:
+                    type: string
+                  addressLine1:
+                    type: string
+                  addressLine2:
+                    type: string
+                  city:
+                    type: string
+                  state:
+                    type: string
+                  zip:
+                    type: string
+                  country:
+                    type: string
+        500:
+          description: Failed to update or create purchaser details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Receipts
+components:
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Hash:
+      in: path
+      name: hash
+      required: true
+      description: Hash
+      schema:
+        type: string
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

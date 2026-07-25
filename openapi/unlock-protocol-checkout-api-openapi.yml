@@ -1,0 +1,176 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Checkout API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Checkout
+paths:
+  /v2/checkout/{id}:
+    delete:
+      operationId: deleteCheckoutConfig
+      security:
+      - User: []
+      description: Delete a checkout config
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The id of the checkout config
+      responses:
+        200:
+          description: Checkout config deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Checkout
+    get:
+      operationId: getCheckoutConfig
+      security:
+      - User: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The id of the checkout config
+      responses:
+        200:
+          description: Checkout config for the given id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutConfig'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Checkout
+    put:
+      operationId: updateCheckoutConfig
+      security:
+      - User: []
+      description: A new checkout config is created or updated if it already exists
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          nullable: true
+          type: string
+        description: This is optional. If you don't pass an ID, a new config will be created. If you pass an ID, the config will be created.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - config
+              - name
+              properties:
+                name:
+                  type: string
+                config:
+                  type: object
+                  additionalProperties: true
+      responses:
+        200:
+          description: Checkout config for the updated id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutConfig'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Checkout
+  /v2/checkout/list:
+    get:
+      operationId: listCheckoutConfigs
+      security:
+      - User: []
+      description: A list of all checkout configs created by the user
+      responses:
+        200:
+          description: Checkout config for the updated id.
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CheckoutConfig'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Checkout
+components:
+  schemas:
+    CheckoutConfig:
+      type: object
+      required:
+      - config
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        by:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+          required:
+          - locks
+          properties:
+            locks:
+              type: object
+              additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

@@ -1,0 +1,231 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Auth API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Auth
+paths:
+  /v2/auth/nonce:
+    get:
+      operationId: nonce
+      description: Provide a unique nonce for using in sign in with ethereum
+      parameters: []
+      responses:
+        200:
+          description: Unique nonce.
+          content:
+            html/text:
+              schema:
+                type: string
+                nullable: false
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Auth
+  /v2/auth/login:
+    post:
+      operationId: login
+      description: Login as a user using Sign in with Ethereum message signed by the wallet address.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                signature:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResult'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Auth
+  /v2/auth/privy:
+    post:
+      operationId: loginWithPrivy
+      description: Verify an access token using Privy's library and authenticate the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  description: The Privy access token to verify
+                walletAddress:
+                  type: string
+                  description: The wallet address from the user
+              required:
+              - accessToken
+              - walletAddress
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResult'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Auth
+  /v2/auth/logout:
+    post:
+      operationId: logout
+      security:
+      - User: []
+      description: Logout from locksmith. This will invalidate all your session tokens.
+      responses:
+        200:
+          $ref: '#/components/responses/200.GenericSuccess'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Auth
+  /v2/auth/revoke:
+    post:
+      operationId: revoke
+      security:
+      - User: []
+      description: Invalidate a session.
+      responses:
+        200:
+          $ref: '#/components/responses/200.GenericSuccess'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Auth
+  /v2/auth/user:
+    get:
+      operationId: user
+      description: Get user details.
+      security:
+      - User: []
+      responses:
+        200:
+          description: Return the user details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Auth
+components:
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+          nullable: false
+        error:
+          type: string
+          nullable: true
+    Auth:
+      required:
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
+          nullable: false
+    AuthResult:
+      required:
+      - accessToken
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
+          nullable: true
+        accessToken:
+          type: string
+          nullable: false
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+    GenericSuccess:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Successfully fulfilled the request.
+          nullable: false
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: resource not found
+          nullable: false
+  responses:
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    200.GenericSuccess:
+      description: Successfully completed the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericSuccess'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Images API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Images
+paths:
+  /v2/images/upload:
+    post:
+      operationId: uploadImages
+      security:
+      - User: []
+      description: Upload images to locksmith
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        201:
+          description: Successfully uploaded images.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        publicUrl:
+                          type: string
+                        originamName:
+                          type: string
+                        mimetype:
+                          type: string
+                        contentType:
+                          type: string
+                        size:
+                          type: number
+                        key:
+                          type: string
+                        metadata:
+                          type: object
+                          properties:
+                            fieldName:
+                              type: string
+                            createdBy:
+                              type: string
+                        encoding:
+                          type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Images
+components:
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

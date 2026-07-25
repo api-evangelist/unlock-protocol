@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Lock Settings API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Lock Settings
+paths:
+  /v2/lock-settings/slug/{slug}:
+    get:
+      operationId: getLockSettingsBySlug
+      description: Get lock setting by slug
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      responses:
+        200:
+          description: Successfully get settings for lock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockSettings'
+      tags:
+      - Lock Settings
+  /v2/lock-settings/{network}/locks/{lockAddress}:
+    get:
+      operationId: getLockSettings
+      description: Get saved lock settings
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully get settings for lock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockSettings'
+        404:
+          description: Setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      tags:
+      - Lock Settings
+    post:
+      operationId: saveLockSetting
+      security:
+      - User: []
+      description: Save lock settings
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockSettings'
+      responses:
+        200:
+          description: Successfully saved settings for lock
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sendEmail:
+                    type: boolean
+        500:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Lock Settings
+components:
+  schemas:
+    LockSettings:
+      type: object
+      nullable: false
+      properties:
+        lockAddress:
+          type: string
+        network:
+          type: number
+        sendEmail:
+          type: boolean
+        slug:
+          type: string
+        replyTo:
+          type: string
+          nullable: true
+        creditCardPrice:
+          type: number
+          nullable: true
+        emailSender:
+          type: string
+          nullable: true
+        checkoutConfigId:
+          type: string
+          nullable: true
+        hookGuildId:
+          type: string
+          nullable: true
+        unlockFeeChargedToUser:
+          type: boolean
+        creditCardCurrency:
+          type: string
+          default: usd
+        crossmintClientId:
+          type: string
+          nullable: true
+        promoCodes:
+          type: array
+          items:
+            type: string
+        passwords:
+          type: array
+          items:
+            type: string
+        requiredGitcoinPassportScore:
+          type: number
+          nullable: true
+        allowList:
+          type: array
+          items:
+            type: string
+          nullable: true
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

@@ -1,0 +1,247 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Email API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Email
+paths:
+  /v2/email/{network}/locks/{lockAddress}/custom/{template}:
+    get:
+      operationId: getCustomEmailContent
+      security:
+      - User: []
+      description: Get custom email content for a specific template and lock details
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/TemplateId'
+      responses:
+        200:
+          description: Successfully get custom template content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lockAddress:
+                    type: string
+                  network:
+                    type: number
+                  template:
+                    type: string
+                  content:
+                    type: string
+        500:
+          description: Could not get custom email content.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        404:
+          description: Custom email content not found for this template.
+      tags:
+      - Email
+    post:
+      operationId: saveCustomEmailContent
+      security:
+      - User: []
+      description: Save custom email content for a specif lock.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/TemplateId'
+      responses:
+        200:
+          description: Custom email content successfully saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lockAddress:
+                    type: string
+                  network:
+                    type: number
+                  template:
+                    type: string
+                  content:
+                    type: string
+        500:
+          description: Could not save custom email content.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Email
+  /v2/email/{network}/locks/{lockAddress}/custom/send:
+    post:
+      operationId: sendCustomEmail
+      security:
+      - User: []
+      description: Send custom email to recipients
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                content:
+                  type: string
+      responses:
+        200:
+          description: Successfully sent custom email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sent:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Email
+  /v2/email/{slug}/invite:
+    post:
+      operationId: sendEventInvites
+      security:
+      - User: []
+      description: Send event invites to a list of recipients
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  maxItems: 10
+      responses:
+        200:
+          description: Successfully sent invites!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sent:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Email
+components:
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+          nullable: false
+        error:
+          type: string
+          nullable: true
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    TemplateId:
+      in: path
+      name: template
+      required: true
+      description: Template id for email
+      schema:
+        type: string
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

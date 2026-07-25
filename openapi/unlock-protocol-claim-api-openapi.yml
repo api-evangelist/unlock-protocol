@@ -1,0 +1,171 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Claim API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Claim
+paths:
+  /v2/claim/{network}/locks/{lockAddress}:
+    post:
+      security:
+      - User: []
+      operationId: claim
+      description: Claim a membership key for a lock. If not authenticated, requires an email in the body.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - name: captcha
+        in: header
+        required: true
+        description: Recaptcha value to pass.
+        schema:
+          type: string
+      - name: recipient
+        in: header
+        required: false
+        description: Recipient address for key
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                email:
+                  type: string
+                  description: Email address of the recipient
+                recipient:
+                  type: string
+                  description: Recipient address for key
+                referrer:
+                  type: string
+                  description: Referrer address used to mint. This may get overwritten.
+      responses:
+        200:
+          description: Successfully claimed the key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionHash:
+                    type: string
+                  owner:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Claim
+  /claim/{network}/locks/{lockAddress}:
+    post:
+      description: Check if claim is possible for a given purchase
+      operationId: checkClaim
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+                data:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: Send true if purchase can be claimed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  canClaim:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Claim
+components:
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+          nullable: false
+        error:
+          type: string
+          nullable: true
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

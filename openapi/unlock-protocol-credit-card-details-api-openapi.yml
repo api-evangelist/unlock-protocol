@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Credit Card Details API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Credit Card Details
+paths:
+  /v2/api/credit-card-details/{network}/locks/{lockAddress}:
+    get:
+      operationId: isCardPaymentEnabledForLock
+      description: Returns if credit card payment are enable for a lock
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully returns credit card enabled status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  creditCardEnabled:
+                    type: boolean
+      tags:
+      - Credit Card Details
+components:
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

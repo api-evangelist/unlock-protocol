@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Lock API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Lock
+paths:
+  /{network}/lock/{lockAddress}/stripe:
+    delete:
+      operationId: disconnectStripe
+      security:
+      - User: []
+      description: Disconnect stripe account.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully disconnected stripe account.
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Lock
+  /lock/{lockAddress}/stripe-connected:
+    get:
+      operationId: getLockStripeConnectionDetails
+      description: Returns Stripe connection details
+      parameters:
+      - $ref: '#/components/parameters/LockAddress'
+      - in: query
+        name: chain
+        required: true
+        schema:
+          type: number
+        description: Lock network
+      responses:
+        200:
+          description: Successfully returns lock Stripe connection details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  countrySpec:
+                    type: object
+                    properties:
+                      supported_payment_currencies:
+                        type: array
+                        items:
+                          type: string
+                  account:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      charges_enabled:
+                        type: boolean
+                      payouts_enabled:
+                        type: boolean
+                      requirements:
+                        type: object
+                        properties:
+                          disabled_reason:
+                            type: string
+                  connected:
+                    type: number
+      tags:
+      - Lock
+components:
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query

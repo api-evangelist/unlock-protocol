@@ -1,0 +1,467 @@
+openapi: 3.0.0
+info:
+  title: Unlock Locksmith Applications Ticket API
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+servers:
+- url: https://locksmith.unlock-protocol.com
+  description: Production Server
+- url: https://staging-locksmith.unlock-protocol.com
+  description: Staging Server
+tags:
+- name: Ticket
+paths:
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/sign:
+    get:
+      operationId: signTicket
+      security:
+      - User:
+        - keyOwner
+      description: Generate signature to prove validity of token.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Returns signature and payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: string
+                    nullable: false
+                  signature:
+                    type: string
+                    nullable: false
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Ticket
+  /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}/check:
+    put:
+      operationId: checkTicket
+      deprecated: true
+      security:
+      - User:
+        - Verifier
+      description: Mark a lock ticket as checked in.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        202:
+          description: Ticket is checked in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccess'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        409:
+          $ref: '#/components/responses/409.Conflict'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Ticket
+  /v2/api/ticket/{slug}/{network}/lock/{lockAddress}/key/{keyId}/check:
+    put:
+      operationId: checkEventTicket
+      security:
+      - User:
+        - Verifier
+      description: Mark an event ticket as checked in.
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        202:
+          description: Ticket is checked in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccess'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        409:
+          $ref: '#/components/responses/409.Conflict'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Ticket
+  /v2/api/ticket/{slug}/{network}/lock/{lockAddress}/key/{keyId}:
+    get:
+      operationId: getEventTicket
+      security:
+      - User: []
+      description: get a ticket for a key by event.
+      parameters:
+      - $ref: '#/components/parameters/Slug'
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Successfully retrieved the ticket.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                required:
+                - name
+                - lockAddress
+                - keyId
+                - manager
+                - publicLockVersion
+                - userMetadata
+                - isVerifier
+                - attributes
+                - image
+                - description
+                - owner
+                - expiration
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                  name:
+                    type: string
+                  owner:
+                    type: string
+                  manager:
+                    type: string
+                  lockAddress:
+                    type: string
+                  image:
+                    type: string
+                  description:
+                    type: string
+                  checkedInAt:
+                    type: number
+                  userMetadata:
+                    type: object
+                    additionalProperties: true
+                  expiration:
+                    type: string
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - value
+                      properties:
+                        trait_type:
+                          type: string
+                        value:
+                          type: string
+                        display_type:
+                          type: string
+                  publicLockVersion:
+                    type: string
+                  isVerifier:
+                    description: Whether the user who requested the ticket can verify the ticket.
+                    type: boolean
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Ticket
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/email:
+    post:
+      operationId: emailTicket
+      security:
+      - User:
+        - LockManager
+      description: Send QR code by email.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Email sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sent:
+                    type: boolean
+                    default: true
+                    nullable: false
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Ticket
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/qr:
+    get:
+      operationId: ticketQRCode
+      security:
+      - User:
+        - user
+        - lockManager
+      description: Get QR code for the key.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: QR code image.
+          content:
+            image/gif:
+              schema:
+                nullable: true
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Ticket
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/verification:
+    get:
+      operationId: ticketVerificationUrl
+      security:
+      - User:
+        - user
+        - lockManager
+      description: Get the verification URL for the key.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: JSON object containing the verification url
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                properties:
+                  verificationUrl:
+                    type: string
+                    nullable: false
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+      tags:
+      - Ticket
+  /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}/generate:
+    get:
+      operationId: generateTicket
+      security:
+      - User: []
+      description: Generate a ticket for a key.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Successfully generated the ticket.
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Ticket
+  /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}:
+    get:
+      operationId: getTicket
+      security:
+      - User: []
+      description: get a ticket for a key by lock.
+      parameters:
+      - $ref: '#/components/parameters/Network'
+      - $ref: '#/components/parameters/LockAddress'
+      - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Successfully retrieved the ticket.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                required:
+                - name
+                - lockAddress
+                - keyId
+                - manager
+                - publicLockVersion
+                - userMetadata
+                - isVerifier
+                - attributes
+                - image
+                - description
+                - owner
+                - expiration
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                  name:
+                    type: string
+                  owner:
+                    type: string
+                  manager:
+                    type: string
+                  lockAddress:
+                    type: string
+                  image:
+                    type: string
+                  description:
+                    type: string
+                  checkedInAt:
+                    type: number
+                  userMetadata:
+                    type: object
+                    additionalProperties: true
+                  expiration:
+                    type: string
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - value
+                      properties:
+                        trait_type:
+                          type: string
+                        value:
+                          type: string
+                        display_type:
+                          type: string
+                  publicLockVersion:
+                    type: string
+                  isVerifier:
+                    description: Whether the user who requested the ticket can verify the ticket.
+                    type: boolean
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+      tags:
+      - Ticket
+components:
+  responses:
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
+  schemas:
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+    NotAuthenticated:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+          nullable: false
+    GenericSuccess:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Successfully fulfilled the request.
+          nullable: false
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: resource not found
+          nullable: false
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    Application:
+      type: apiKey
+      name: api-key
+      in: query
