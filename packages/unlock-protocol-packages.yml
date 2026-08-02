@@ -1,0 +1,79 @@
+generated: '2026-07-21'
+method: searched
+source: https://registry.npmjs.org/ (per-package lookups, @unlock-protocol scope)
+packages:
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/unlock-js'
+    version: 0.51.2
+    url: https://www.npmjs.com/package/@unlock-protocol/unlock-js
+    install: npm install @unlock-protocol/unlock-js
+    description: Libraries to include Unlock APIs inside a JavaScript application — includes LocksmithService for the Locksmith API and Web3Service/WalletService for the smart contracts.
+    docs: https://docs.unlock-protocol.com/tools/unlock.js
+    official: true
+  - language: solidity
+    registry: npm
+    name: '@unlock-protocol/contracts'
+    version: 0.0.35
+    url: https://www.npmjs.com/package/@unlock-protocol/contracts
+    install: npm install @unlock-protocol/contracts
+    description: Unlock Protocol smart contract ABIs and interfaces (Unlock factory + PublicLock membership contracts).
+    official: true
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/networks'
+    version: 0.0.25
+    url: https://www.npmjs.com/package/@unlock-protocol/networks
+    install: npm install @unlock-protocol/networks
+    description: Unlock Protocol's contract addresses for the networks the protocol is deployed on.
+    official: true
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/paywall'
+    version: 0.8.1
+    url: https://www.npmjs.com/package/@unlock-protocol/paywall
+    install: npm install @unlock-protocol/paywall
+    description: Embeddable Paywall library — tracks key ownership state and displays the Checkout for purchasing keys.
+    docs: https://docs.unlock-protocol.com/tools/checkout/paywall
+    official: true
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/hardhat-plugin'
+    version: 0.2.3
+    url: https://www.npmjs.com/package/@unlock-protocol/hardhat-plugin
+    install: npm install @unlock-protocol/hardhat-plugin
+    description: Hardhat plugin for deploying and interacting with Unlock Protocol contracts in development.
+    docs: https://docs.unlock-protocol.com/tools/hardhat-plugin
+    official: true
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/ui'
+    version: 0.4.9
+    url: https://www.npmjs.com/package/@unlock-protocol/ui
+    install: npm install @unlock-protocol/ui
+    description: Unlock's design system components.
+    official: true
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/core'
+    version: 0.0.2
+    url: https://www.npmjs.com/package/@unlock-protocol/core
+    install: npm install @unlock-protocol/core
+    description: Shared core types and schemas used across Unlock packages.
+    official: true
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/crypto-icon'
+    version: 0.1.2
+    url: https://www.npmjs.com/package/@unlock-protocol/crypto-icon
+    install: npm install @unlock-protocol/crypto-icon
+    description: Universal crypto icon component by Unlock.
+    official: true
+  - language: javascript
+    registry: npm
+    name: '@unlock-protocol/eslint-config'
+    version: 0.0.3
+    url: https://www.npmjs.com/package/@unlock-protocol/eslint-config
+    install: npm install @unlock-protocol/eslint-config
+    description: Unlock's base JS ESLint config (internal tooling).
+    official: true

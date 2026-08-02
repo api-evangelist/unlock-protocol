@@ -1,0 +1,38 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unlock-protocol.com/tools/locksmith/ + openapi/unlock-protocol-locksmith-openapi.yml
+authentication:
+  style: SIWE (EIP-4361) signed-message login exchanged for a short-lived bearer JWT + refresh token; application-level access via api-key query parameter.
+  details: authentication/unlock-protocol-authentication.yml
+idempotency:
+  supported: false
+  note: No Idempotency-Key header or equivalent contract is documented in the OpenAPI or docs.
+pagination:
+  style: page-offset
+  request_params: [page, max, pageSize]
+  evidence: page/max on RSVP and approval list operations; page/pageSize (default 1) on event-collection listings; keys listing deprecated in favor of a keys-by-page operation.
+field_expansion:
+  supported: false
+metadata:
+  supported: true
+  note: Lock, key, and user metadata are first-class resources (metadata operations under /v2/api/metadata/...), protected by lock-manager authorization.
+request_tracing:
+  header: null
+  note: No documented request-id/trace header contract.
+versioning:
+  scheme: uri-path
+  current: v2
+  details: lifecycle/unlock-protocol-lifecycle.yml
+error_envelope:
+  shape: 'Plain JSON with HTTP status codes; common schemas GenericInvalidBodyError, GenericNotFound, GenericServerError, NotAuthenticated in the OpenAPI.'
+  details: errors/unlock-protocol-problem-types.yml
+rate_limits:
+  documented: false
+  note: No rate-limit policy or signaling headers documented for Locksmith.
+events:
+  style: WebSub (W3C) hub subscriptions for new locks and keys.
+  details: asyncapi/unlock-protocol-websub-webhooks.yml
+cross_links:
+  errors: errors/unlock-protocol-problem-types.yml
+  lifecycle: lifecycle/unlock-protocol-lifecycle.yml
+  authentication: authentication/unlock-protocol-authentication.yml

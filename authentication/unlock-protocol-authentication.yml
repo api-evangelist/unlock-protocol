@@ -1,0 +1,34 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/unlock-protocol-locksmith-openapi.yml
+docs: https://docs.unlock-protocol.com/tools/locksmith/
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - query
+  model: >-
+    Sign-In with Ethereum (EIP-4361): the client fetches a nonce (nonce operation), signs a SIWE
+    message with the user's wallet, and posts it to the login operation. Locksmith verifies the
+    signature and issues a short-lived JWT access token (sent as Authorization bearer) plus a
+    refresh token for renewal. Applications can alternatively authenticate with an api-key query
+    parameter issued per registered application. Users without wallets can use Unlock Accounts
+    (email/Google) via the same flow; a Privy-based login (loginWithPrivy) is also exposed.
+  siwe_docs: https://docs.unlock-protocol.com/tools/sign-in-with-ethereum/
+  sdk_helper: LocksmithService.createSiweMessage in @unlock-protocol/unlock-js
+schemes:
+- name: User
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  note: Obtained via SIWE login; short expiry, renewed with a refresh token (revoke and logout operations invalidate tokens).
+  sources:
+  - openapi/unlock-protocol-locksmith-openapi.yml
+- name: Application
+  type: apiKey
+  in: query
+  parameter: api-key
+  note: Issued per application (createApplication operation); listed/rotated via the applications operations.
+  sources:
+  - openapi/unlock-protocol-locksmith-openapi.yml

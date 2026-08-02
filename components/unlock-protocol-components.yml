@@ -1,0 +1,28 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unlock-protocol.com/tools/checkout/paywall + https://docs.unlock-protocol.com/tools/checkout/
+families:
+  - name: Paywall
+    kind: embeddable-js
+    package: '@unlock-protocol/paywall'
+    cdn: https://paywall.unlock-protocol.com/static/unlock.latest.min.js
+    description: JavaScript library that tracks key-ownership state on any webpage, emits window events (unlockProtocol.status locked/unlocked, unlockProtocol.authenticated), and displays the Checkout for purchasing keys. Configured via a global unlockProtocolConfig object.
+    docs: https://docs.unlock-protocol.com/tools/checkout/paywall
+  - name: Checkout
+    kind: hosted-surface
+    url: https://app.unlock-protocol.com/checkout
+    description: Hosted purchase/checkout flow shared with the Paywall via the paywallConfig object; also used to build Sign-In with Ethereum redirect URLs (client_id + redirect_uri query parameters).
+    docs: https://docs.unlock-protocol.com/tools/checkout/
+  - name: Dashboard
+    kind: hosted-surface
+    url: https://app.unlock-protocol.com/dashboard
+    description: Hosted creator dashboard for deploying locks and managing members ("keychain" for consumers).
+    docs: https://docs.unlock-protocol.com/tools/dashboard
+  - name: UI design system
+    kind: component-library
+    package: '@unlock-protocol/ui'
+    description: Unlock's React design-system components.
+  - name: Crypto icon
+    kind: component-library
+    package: '@unlock-protocol/crypto-icon'
+    description: Universal crypto icon component.

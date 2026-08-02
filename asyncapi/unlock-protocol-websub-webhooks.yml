@@ -1,0 +1,20 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unlock-protocol.com/tools/locksmith/webhooks
+type: Webhooks
+protocol: websub
+note: Unlock publishes no AsyncAPI document; this captures the documented WebSub webhook surface verbatim. Locksmith implements the W3C WebSub spec with built-in intent verification, relaying real-time updates from the Unlock subgraphs.
+hub:
+  subscribe_url: https://locksmith.unlock-protocol.com/api/hooks/[topic]
+  subscription: POST a WebSub-conformant subscription request (hub.topic, hub.callback, hub.mode) per the W3C WebSub spec.
+topics:
+  - name: New Locks
+    url: https://locksmith.unlock-protocol.com/api/hooks/:network/locks
+    description: Fires when new locks are created on the given network.
+  - name: New Keys
+    url: https://locksmith.unlock-protocol.com/api/hooks/:network/keys
+    description: Fires when new keys (membership NFTs) are minted on the given network.
+  - name: New Keys for a Lock
+    url: https://locksmith.unlock-protocol.com/api/hooks/:network/locks/:lock/keys
+    description: Fires when new keys are minted for a specific lock address on the given network.
+tutorial: https://docs.unlock-protocol.com/tutorials/back-end/locksmith-webhooks

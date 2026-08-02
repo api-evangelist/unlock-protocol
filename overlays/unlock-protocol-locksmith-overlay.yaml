@@ -1,0 +1,41 @@
+# API Evangelist enhancement overlay — never mutates the harvested spec.
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Unlock Locksmith
+  version: 1.0.0
+x-generated: '2026-07-21'
+x-method: generated
+extends: openapi/unlock-protocol-locksmith-openapi.yml
+actions:
+  - target: $.info
+    update:
+      x-apievangelist:
+        provider: unlock-protocol
+        enriched: '2026-07-21'
+        notes: >-
+          Locksmith is Unlock Protocol's hosted convenience API (metadata storage, ticketing,
+          fiat payments via Stripe Connect, webhooks, emails, QR codes). It complements — and can
+          be replaced by — direct use of the Unlock smart contracts and subgraphs.
+      x-apievangelist-artifacts:
+        authentication: authentication/unlock-protocol-authentication.yml
+        errors: errors/unlock-protocol-problem-types.yml
+        conventions: conventions/unlock-protocol-conventions.yml
+        webhooks: asyncapi/unlock-protocol-websub-webhooks.yml
+        data-model: data-model/unlock-protocol-data-model.yml
+  - target: $.info
+    update:
+      x-audiences:
+        - membership-platform-developers
+        - event-ticketing-integrators
+        - token-gating-implementers
+  - target: $.servers
+    description: Production and staging servers are both published; staging doubles as the sandbox.
+    update: []
+  - target: $.paths['/v2/api/{network}/locks/{lockAddress}/keys'].get
+    update:
+      x-apievangelist-note: Deprecated by the provider in favor of keysByPage (keys-by-page).
+  - target: $.components.securitySchemes.User
+    update:
+      x-apievangelist-note: >-
+        Bearer JWT obtained via a Sign-In with Ethereum (EIP-4361) login flow (nonce + login
+        operations); short-lived access token with a refresh token for renewal.

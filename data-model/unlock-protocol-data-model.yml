@@ -1,0 +1,44 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/unlock-protocol-locksmith-openapi.yml (components.schemas + path structure)
+entities:
+  - name: Lock
+    description: A membership smart contract deployed on a network; identified by (network, lockAddress). Locksmith stores its off-chain metadata and settings.
+  - name: Key
+    description: A membership NFT minted by a lock; identified by (network, lockAddress, keyId). Carries KeyMetadata and doubles as an event ticket.
+  - name: User
+    description: A wallet address (or Unlock Account for email users); carries UserMetadata scoped to a lock.
+  - name: Application
+    description: A developer application registered with Locksmith; holds the api-key credential.
+  - name: Verifier
+    description: An address authorized to check in tickets for a lock or event.
+  - name: Event
+    description: An event (slug-identified) whose tickets are keys of one or more locks; supports RSVPs and refunds.
+  - name: EventCollection
+    description: A curated collection of events with managers and approval workflow (EventCollectionAssociation links events to collections).
+  - name: CheckoutConfig
+    description: A saved checkout/paywall configuration (id-identified) owned by a lock manager.
+  - name: Receipt
+    description: Purchase receipt tied to (network, lockAddress, transaction hash); supplemented by a lock-level ReceiptsBase template.
+  - name: Rsvp
+    description: An attendee RSVP on an event, with approval status.
+relationships:
+  - {from: Lock, to: Key, kind: has_many, via: lockAddress+network}
+  - {from: Key, to: Lock, kind: belongs_to, via: lockAddress+network}
+  - {from: Key, to: KeyMetadata, kind: has_one, via: keyId}
+  - {from: Lock, to: LockSettings, kind: has_one, via: lockAddress+network}
+  - {from: User, to: UserMetadata, kind: has_many, via: userAddress (scoped per lock)}
+  - {from: Lock, to: Verifier, kind: has_many, via: lockAddress+network}
+  - {from: Event, to: Verifier, kind: has_many, via: slug}
+  - {from: Event, to: Rsvp, kind: has_many, via: slug}
+  - {from: EventCollection, to: Event, kind: has_many, via: EventCollectionAssociation}
+  - {from: Lock, to: Receipt, kind: has_many, via: lockAddress+network}
+  - {from: Lock, to: ReceiptsBase, kind: has_one, via: lockAddress+network}
+  - {from: Lock, to: CheckoutConfig, kind: has_many, via: lock manager ownership}
+  - {from: Application, to: User, kind: belongs_to, via: creator wallet}
+identifiers:
+  - {entity: Lock, form: EVM address + numeric chain/network id}
+  - {entity: Key, form: integer tokenId within a lock}
+  - {entity: Event, form: URL slug}
+  - {entity: CheckoutConfig, form: opaque id}
+  - {entity: Receipt, form: transaction hash}

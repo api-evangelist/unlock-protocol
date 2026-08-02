@@ -1,0 +1,34 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unlock-protocol.com/ (docs claims) + openapi/unlock-protocol-locksmith-openapi.yml (derived)
+standards:
+  - id: eip-4361-siwe
+    conforms: true
+    evidence: 'Docs: authentication is "a flow based on the EIP 4361" (Sign-In with Ethereum) — https://docs.unlock-protocol.com/tools/sign-in-with-ethereum/'
+  - id: websub
+    conforms: true
+    evidence: 'Docs: "Locksmith implements Websub ... The body needs to match the schema specified in the Websub w3c spec" — https://docs.unlock-protocol.com/tools/locksmith/webhooks'
+  - id: erc-721
+    conforms: true
+    evidence: Membership keys are NFTs minted by PublicLock contracts (ERC-721 based) — https://docs.unlock-protocol.com/core-protocol/public-lock/
+  - id: oauth2
+    conforms: false
+    evidence: No oauth2 securityScheme in the Locksmith OpenAPI; the SIWE redirect flow is "inspired by the OpenId Connect and OAuth flows" but is not OAuth 2.0.
+  - id: oidc
+    conforms: false
+    evidence: No openIdConnect securityScheme; no /.well-known/openid-configuration document (probed 2026-07-21, catch-all fallback only).
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: Locksmith error responses are plain JSON with HTTP status codes; no application/problem+json in the OpenAPI.
+  - id: pagination
+    conforms: true
+    evidence: Offset/page pagination on list operations (page, max, pageSize query parameters in the OpenAPI, e.g. rsvps and keys-by-page operations).
+  - id: idempotency
+    conforms: false
+    evidence: No Idempotency-Key or equivalent idempotency contract in the OpenAPI or docs.
+  - id: json-api
+    conforms: false
+    evidence: Response bodies are ad-hoc JSON objects, not JSON:API envelopes.
+  - id: graphql
+    conforms: true
+    evidence: Unlock subgraphs expose GraphQL per network via The Graph — https://docs.unlock-protocol.com/tools/subgraph/

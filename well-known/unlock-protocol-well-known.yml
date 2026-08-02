@@ -1,0 +1,37 @@
+generated: '2026-07-21'
+method: searched
+note: Probed 2026-07-21. locksmith.unlock-protocol.com returns HTTP 200 with a catch-all
+  HTML fallback page (an anchor link to unlock-protocol.com) for every /.well-known/ path —
+  those are recorded as catch-all, not as real documents. No real well-known discovery
+  documents were found on any Unlock host.
+hosts:
+  - host: https://unlock-protocol.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /llms.txt, status: 404}
+  - host: https://locksmith.unlock-protocol.com
+    documents:
+      - {path: /.well-known/security.txt, status: 200, note: catch-all HTML fallback, real: false}
+      - {path: /.well-known/openid-configuration, status: 200, note: catch-all HTML fallback, real: false}
+      - {path: /.well-known/oauth-authorization-server, status: 200, note: catch-all HTML fallback, real: false}
+      - {path: /.well-known/api-catalog, status: 200, note: catch-all HTML fallback, real: false}
+      - {path: /.well-known/ai-plugin.json, status: 200, note: catch-all HTML fallback, real: false}
+  - host: https://app.unlock-protocol.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+  - host: https://docs.unlock-protocol.com
+    documents:
+      - {path: /.well-known/security.txt, status: 404}
+      - {path: /.well-known/openid-configuration, status: 404}
+      - {path: /.well-known/oauth-authorization-server, status: 404}
+      - {path: /.well-known/api-catalog, status: 404}
+      - {path: /.well-known/ai-plugin.json, status: 404}
+      - {path: /llms.txt, status: 404}

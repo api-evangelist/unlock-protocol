@@ -1,0 +1,94 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/unlock-protocol-locksmith-openapi.yml
+format: http-status
+note: Derived from the Locksmith OpenAPI 4xx/5xx responses. Locksmith returns conventional HTTP status codes with JSON error bodies; it does not advertise RFC 9457 application/problem+json.
+problems:
+- status: 400
+  title: Bad request
+  descriptions:
+  - Bad request.
+  - Invalid request
+  - Invalid request (empty array, mixed types, or invalid addresses)
+  - Missing parameters or invalid/expired verification code.
+  - Missing required fields
+  operation_count: 46
+  example_operations:
+  - openapi/unlock-protocol-locksmith-openapi.yml#addEventToCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#addManagerToEventCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveAttendeesRsvp
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveEvent
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveRsvp
+  - openapi/unlock-protocol-locksmith-openapi.yml#bulkApproveEvents
+- status: 401
+  title: Unauthorized
+  descriptions:
+  - Unauthorized
+  operation_count: 38
+  example_operations:
+  - openapi/unlock-protocol-locksmith-openapi.yml#addManagerToEventCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#cancelSubscription
+  - openapi/unlock-protocol-locksmith-openapi.yml#claim
+  - openapi/unlock-protocol-locksmith-openapi.yml#connectStripeAccount
+  - openapi/unlock-protocol-locksmith-openapi.yml#createTransferCode
+  - openapi/unlock-protocol-locksmith-openapi.yml#deleteCheckoutConfig
+- status: 403
+  title: Forbidden
+  descriptions:
+  - Transfer not authorized by locksmith
+  operation_count: 29
+  example_operations:
+  - openapi/unlock-protocol-locksmith-openapi.yml#addEventVerifier
+  - openapi/unlock-protocol-locksmith-openapi.yml#addManagerToEventCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#applications
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveEvent
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveRefunds
+  - openapi/unlock-protocol-locksmith-openapi.yml#bulkApproveEvents
+- status: 404
+  title: Not found
+  descriptions:
+  - Custom email content not found for this template.
+  - Impossible to retrieve receipt details.
+  - Impossible to retrieve supplier details.
+  - Job not found
+  - Key not found.
+  - No receipt generation status found.
+  - Not Found
+  - Setting not found
+  operation_count: 54
+  example_operations:
+  - openapi/unlock-protocol-locksmith-openapi.yml#addEventToCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#addManagerToEventCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveAttendeesRsvp
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveEvent
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveRsvp
+  - openapi/unlock-protocol-locksmith-openapi.yml#approvedRefunds
+- status: 409
+  title: Conflict
+  descriptions: []
+  operation_count: 5
+  example_operations:
+  - openapi/unlock-protocol-locksmith-openapi.yml#addEventVerifier
+  - openapi/unlock-protocol-locksmith-openapi.yml#checkEventTicket
+  - openapi/unlock-protocol-locksmith-openapi.yml#checkTicket
+  - openapi/unlock-protocol-locksmith-openapi.yml#createVerifier
+  - openapi/unlock-protocol-locksmith-openapi.yml#updateUserMetadata
+- status: 500
+  title: Internal server error
+  descriptions:
+  - Could not get custom email content.
+  - Could not save custom email content.
+  - Failed to retrieve receipt details.
+  - Failed to retrieve supplier details.
+  - Failed to update or create purchaser details.
+  - Failed to update or create supplier details.
+  - Invalid request
+  - Server error
+  operation_count: 85
+  example_operations:
+  - openapi/unlock-protocol-locksmith-openapi.yml#addEventToCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#addEventVerifier
+  - openapi/unlock-protocol-locksmith-openapi.yml#addManagerToEventCollection
+  - openapi/unlock-protocol-locksmith-openapi.yml#applications
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveAttendeesRsvp
+  - openapi/unlock-protocol-locksmith-openapi.yml#approveEvent

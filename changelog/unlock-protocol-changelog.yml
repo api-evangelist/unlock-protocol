@@ -1,0 +1,51 @@
+generated: '2026-07-21'
+method: searched
+source: https://github.com/unlock-protocol/unlock/releases
+scheme: date-tagged monorepo releases (YYYYMMDD-n tags) on the unlock-protocol/unlock monorepo, covering locksmith, unlock-app, unlock-js, paywall, subgraph, and contracts packages.
+current: 20250325-1
+note: Release cadence slowed after Unlock Labs handed stewardship to the Unlock Protocol Foundation / DAO in 2025; the releases feed last updated 2025-03-25. Recent window captured below.
+entries:
+  - version: 20250325-1
+    date: '2025-03-25'
+    breaking: false
+    highlights:
+      - unlock-js async improvements
+      - Semi-async event creation in unlock-app
+      - Rate limits for name resolution
+      - Locksmith lock-processing fix across networks
+    url: https://github.com/unlock-protocol/unlock/releases/tag/20250325-1
+  - version: 20250307-1
+    date: '2025-03-07'
+    breaking: false
+    highlights:
+      - Security dependency update (Next.js 14.2.25)
+    url: https://github.com/unlock-protocol/unlock/releases/tag/20250307-1
+  - version: 20250117-1
+    date: '2025-01-17'
+    breaking: false
+    highlights:
+      - Subgraph adds creationTransactionHash
+      - Locksmith decouples event creation from user connection state
+      - UI package cleanup
+    url: https://github.com/unlock-protocol/unlock/releases/tag/20250117-1
+  - version: 20241212-1
+    date: '2024-12-12'
+    breaking: false
+    highlights:
+      - Checkout email pre-fill and config fixes
+      - Paywall fix
+    url: https://github.com/unlock-protocol/unlock/releases/tag/20241212-1
+  - version: '20241126'
+    date: '2024-11-26'
+    breaking: false
+    highlights:
+      - Privy wallet funding support in checkout
+      - User settings improvements
+    url: https://github.com/unlock-protocol/unlock/releases/tag/20241126
+  - version: 20241115-1
+    date: '2024-11-15'
+    breaking: false
+    highlights:
+      - Event collections UX improvements
+      - Single web3Service refactor in Locksmith
+    url: https://github.com/unlock-protocol/unlock/releases/tag/20241115-1

@@ -1,0 +1,370 @@
+generated: '2026-07-21'
+method: derived
+status: candidate
+source: openapi/unlock-protocol-locksmith-openapi.yml
+note: No official Unlock Protocol MCP server was found on npm or in the docs (checked 2026-07-21). This is a candidate tool list derived from the Locksmith OpenAPI operations.
+server:
+  name: unlock-protocol-locksmith
+  transport: http
+  url: null
+tools:
+- name: nonce
+  description: Provide a unique nonce for using in sign in with ethereum
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#nonce
+- name: login
+  description: Login as a user using Sign in with Ethereum message signed by the wallet address.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#login
+- name: loginWithPrivy
+  description: Verify an access token using Privy's library and authenticate the user
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#loginWithPrivy
+- name: logout
+  description: Logout from locksmith. This will invalidate all your session tokens.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#logout
+- name: revoke
+  description: Invalidate a session.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#revoke
+- name: user
+  description: Get user details.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#user
+- name: applications
+  description: List applications created the user.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#applications
+- name: createApplication
+  description: Create application associated with user wallet.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#createApplication
+- name: deleteApplication
+  description: Delete application by id.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#deleteApplication
+- name: updateApplication
+  description: Update application by id.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateApplication
+- name: verifiers
+  description: List of verifiers for the lock address. (deprecated in favor of eventVerifiers)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#verifiers
+- name: createVerifier
+  description: Create verifier. (deprecated in favor of addEventVerifier)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#createVerifier
+- name: deleteVerifier
+  description: Remove verifier. (deprecated in favor of deleteEventVerifier)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#deleteVerifier
+- name: verifier
+  description: Check if an address is a verifier of the lock. (deprecated in favor of eventVerifier)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#verifier
+- name: eventVerifiers
+  description: List of verifiers for an event.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#eventVerifiers
+- name: addEventVerifier
+  description: Adds a verifier for an event.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#addEventVerifier
+- name: deleteEventVerifier
+  description: Removes a verifier for an event.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#deleteEventVerifier
+- name: approveRefunds
+  description: Approves refunds for an event.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#approveRefunds
+- name: approvedRefunds
+  description: Returns the merkle proof of an approved refund.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#approvedRefunds
+- name: signTicket
+  description: Generate signature to prove validity of token.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#signTicket
+- name: checkTicket
+  description: Mark a lock ticket as checked in.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#checkTicket
+- name: checkEventTicket
+  description: Mark an event ticket as checked in.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#checkEventTicket
+- name: getEventTicket
+  description: get a ticket for a key by event.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getEventTicket
+- name: emailTicket
+  description: Send QR code by email.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#emailTicket
+- name: ticketQRCode
+  description: Get QR code for the key.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#ticketQRCode
+- name: ticketVerificationUrl
+  description: Get the verification URL for the key.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#ticketVerificationUrl
+- name: lockMetadata
+  description: Get metadata for lock address.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#lockMetadata
+- name: updateLockMetadata
+  description: Update or create metadata for lock address.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateLockMetadata
+- name: keyMetadata
+  description: Get key and user metadata.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#keyMetadata
+- name: updateKeyMetadata
+  description: Update or create metadata for key.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateKeyMetadata
+- name: updateUserMetadata
+  description: Update or create user metadata for lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateUserMetadata
+- name: getUserMetadata
+  description: get user metadata for a lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUserMetadata
+- name: updateUsersMetadata
+  description: Update or create user metadata for lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateUsersMetadata
+- name: getWaasToken
+  description: Gets Coinbase WAAS token for user by email and selected provider.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getWaasToken
+- name: getUserAccountType
+  description: Gets User account type by email.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUserAccountType
+- name: sendVerificationCode
+  description: Sends a verification code to the user's email if the current code is expired or does not exist.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#sendVerificationCode
+- name: verifyEmailCode
+  description: Verifies the email code sent to the users email address.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#verifyEmailCode
+- name: updateUserEncryptedPrivateKey
+  description: Updates a user's private key, using their email address as key. In the case of failure a rejected promise is returned to the caller.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateUserEncryptedPrivateKey
+- name: getUserPrivateKey
+  description: Given a user's email address, retrieves their private key. In the case of failure a rejected promise is returned to the caller.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUserPrivateKey
+- name: getUserRecoveryPhrase
+  description: Given a user's email address, retrieves their recovery phrase. In the case of failure a rejected promise is returned to the caller.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUserRecoveryPhrase
+- name: ejectUser
+  description: Ejects a user given their public key. In the case of failure, a rejected promise is returned to the caller.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#ejectUser
+- name: getDataForRecipientsAndCaptcha
+  description: Retrieves data for recipients and captcha.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getDataForRecipientsAndCaptcha
+- name: keys
+  description: List of lock keys by network with additional metadata if the caller is the lockManager (deprecated, use keys-by-page)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#keys
+- name: keysByPage
+  description: List of lock keys by network with additional metadata if the caller is the lockManager
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#keysByPage
+- name: exportKeys
+  description: Starts Job process to get all the keys for the given lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#exportKeys
+- name: getExportedKeys
+  description: Get job result by job id
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getExportedKeys
+- name: balance
+  description: GET /purchase
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#balance
+- name: price
+  description: GET /v2/api/{network}/price
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#price
+- name: createLockContract
+  description: POST /v2/api/contracts/{network}/lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#createLockContract
+- name: purchase
+  description: Create purchase intent for stripe.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#purchase
+- name: cancelSubscription
+  description: Cancel a fiat subscription.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#cancelSubscription
+- name: getSubscription
+  description: Get an active subscription associated with the key. It can be fiat or crypto.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getSubscription
+- name: claim
+  description: Claim a membership key for a lock. If not authenticated, requires an email in the body.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#claim
+- name: setupPayment
+  description: Setup a payment method for user.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#setupPayment
+- name: listPaymentMethods
+  description: List payment methods for user.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#listPaymentMethods
+- name: generateTicket
+  description: Generate a ticket for a key.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#generateTicket
+- name: getTicket
+  description: get a ticket for a key by lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getTicket
+- name: disconnectStripe
+  description: Disconnect stripe account.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#disconnectStripe
+- name: getLockStripeConnectionDetails
+  description: Returns Stripe connection details
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getLockStripeConnectionDetails
+- name: uploadImages
+  description: Upload images to locksmith
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#uploadImages
+- name: createTransferCode
+  description: Create a transfer code to transfer an airdropped key to an email address.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#createTransferCode
+- name: transferDone
+  description: Finalize the transfer of a key to a recipient. This is to copy over any locksmith related data to the recipient's account.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#transferDone
+- name: getReceiptsStatus
+  description: Retrieve the status of receipt generation for a lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getReceiptsStatus
+- name: createDownloadReceiptsRequest
+  description: Request the creation of a ZIP file containing all receipts for a lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#createDownloadReceiptsRequest
+- name: downloadReceipts
+  description: Download the ZIP file containing all receipts for a lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#downloadReceipts
+- name: getReceipts
+  description: Get all receipts for a lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getReceipts
+- name: getReceipt
+  description: Get receipt details
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getReceipt
+- name: saveReceipt
+  description: Create purchaser details
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveReceipt
+- name: getReceiptsBase
+  description: Get supplier details
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getReceiptsBase
+- name: saveReceiptsBase
+  description: Create supplier details.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveReceiptsBase
+- name: getCustomEmailContent
+  description: Get custom email content for a specific template and lock details
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getCustomEmailContent
+- name: saveCustomEmailContent
+  description: Save custom email content for a specif lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveCustomEmailContent
+- name: deleteCheckoutConfig
+  description: Delete a checkout config
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#deleteCheckoutConfig
+- name: getCheckoutConfig
+  description: GET /v2/checkout/{id}
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getCheckoutConfig
+- name: updateCheckoutConfig
+  description: A new checkout config is created or updated if it already exists
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateCheckoutConfig
+- name: listCheckoutConfigs
+  description: A list of all checkout configs created by the user
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#listCheckoutConfigs
+- name: removePaymentMethods
+  description: Remove all payment methods for a user
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#removePaymentMethods
+- name: isCardPaymentEnabledForLock
+  description: Returns if credit card payment are enable for a lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#isCardPaymentEnabledForLock
+- name: connectStripeAccount
+  description: Connect a stripe account to a lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#connectStripeAccount
+- name: getStripeConnections
+  description: Lists the locks connected to Stripe for a user
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getStripeConnections
+- name: getEventDetails
+  description: Get the event details from lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getEventDetails
+- name: getLockSettingsBySlug
+  description: Get lock setting by slug
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getLockSettingsBySlug
+- name: getLockSettings
+  description: Get saved lock settings
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getLockSettings
+- name: saveLockSetting
+  description: Save lock settings
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveLockSetting
+- name: generateCertificate
+  description: Generate certificate for specific key
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#generateCertificate
+- name: getDataForRecipientsAndGuild
+  description: Get the data for recipients and guild. This is to be used in conjunction with the Guild
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getDataForRecipientsAndGuild
+- name: getDataForRecipientsAndGitcoinPassport
+  description: Get the data for recipients and gitcoin passport. This is to be used in conjunction with the Gitcoin passport scorer.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getDataForRecipientsAndGitcoinPassport
+- name: capturePurchase
+  description: Capture a purchase
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#capturePurchase
+- name: getChargesForLock
+  description: Get the price breakdown for recipients & total charges with fees for a specific lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getChargesForLock
+- name: checkClaim
+  description: Check if claim is possible for a given purchase
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#checkClaim
+- name: unsubscribeEmail
+  description: Unsubscribe email from lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#unsubscribeEmail
+- name: reSubscribeEmail
+  description: resubscribe emails from lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#reSubscribeEmail
+- name: sendCustomEmail
+  description: Send custom email to recipients
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#sendCustomEmail
+- name: sendEventInvites
+  description: Send event invites to a list of recipients
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#sendEventInvites
+- name: saveEventData
+  description: Save event data
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveEventData
+- name: updateEventData
+  description: Update event data
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateEventData
+- name: getEvent
+  description: Retrieves an event based on its slug. The event data including status and transactionHash can be accessed through the `data` property.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getEvent
+- name: rsvp
+  description: User applies to attend an event.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#rsvp
+- name: approveRsvp
+  description: Approves a user to attend an event. (does not airdrop!)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#approveRsvp
+- name: denyRsvp
+  description: Denies a user to attend an event. (does not airdrop!)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#denyRsvp
+- name: approveAttendeesRsvp
+  description: Approves users to attend an event. (does not airdrop!)
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#approveAttendeesRsvp
+- name: denyAttendeesRsvp
+  description: Denies users to attend an event.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#denyAttendeesRsvp
+- name: generateAppleWalletPass
+  description: Generate and return an Apple Wallet pass for a specified key associated with a lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#generateAppleWalletPass
+- name: generateGoogleWalletPass
+  description: Generate and return a Google Wallet pass for a specified key associated with a lock.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#generateGoogleWalletPass
+- name: createEventCollection
+  description: Create a new event collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#createEventCollection
+- name: getEventCollection
+  description: Get details of an event collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getEventCollection
+- name: updateEventCollection
+  description: Update an existing event collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateEventCollection
+- name: addEventToCollection
+  description: Add an event to a collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#addEventToCollection
+- name: getEventsInCollection
+  description: Get events in a collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getEventsInCollection
+- name: removeEventFromCollection
+  description: Remove a single event from an event collection.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#removeEventFromCollection
+- name: addManagerToEventCollection
+  description: Add a new manager address to an event collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#addManagerToEventCollection
+- name: removeManagerFromEventCollection
+  description: Remove a manager address from an event collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#removeManagerFromEventCollection
+- name: getUnapprovedEventsForCollection
+  description: Get unapproved events for a collection
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUnapprovedEventsForCollection
+- name: approveEvent
+  description: Approve a single event within an event collection.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#approveEvent
+- name: bulkApproveEvents
+  description: Bulk approve multiple events within an event collection.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#bulkApproveEvents
+- name: bulkRemoveEvents
+  description: Bulk remove multiple events from an event collection.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#bulkRemoveEvents
+- name: getEventCollectionsByManager
+  description: Get all event collections managed by a specific address
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getEventCollectionsByManager
+- name: checkPrivyUser
+  description: Check if a user exists in Privy by email or wallet address
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#checkPrivyUser
+- name: saveMerkleTree
+  description: Saves a merkle tree from either a list of addresses or a list of [address, amount] tuples.
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveMerkleTree
+- name: saveExternalEventData
+  description: Save external event data that is not associated with an Unlock lock
+  source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveExternalEventData

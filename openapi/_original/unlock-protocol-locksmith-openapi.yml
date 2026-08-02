@@ -1,0 +1,5527 @@
+openapi: '3.0.0'
+info:
+  title: Unlock Locksmith
+  version: '2'
+  description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
+  license:
+    name: MIT
+
+servers:
+  - url: https://locksmith.unlock-protocol.com
+    description: Production Server
+  - url: https://staging-locksmith.unlock-protocol.com
+    description: Staging Server
+
+components:
+  securitySchemes:
+    User:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+    Application:
+      type: apiKey
+      name: api-key
+      in: query
+
+  schemas:
+    Auth:
+      required:
+        - 'walletAddress'
+      type: object
+      properties:
+        walletAddress:
+          type: string
+          nullable: false
+
+    AuthResult:
+      required:
+        - 'accessToken'
+        - 'walletAddress'
+
+      type: object
+      properties:
+        walletAddress:
+          type: string
+          nullable: true
+
+        accessToken:
+          type: string
+          nullable: false
+
+    Application:
+      type: object
+      nullable: false
+      properties:
+        id:
+          type: number
+          nullable: false
+
+        name:
+          type: string
+          nullable: false
+
+        key:
+          type: string
+          nullable: true
+
+        walletAddress:
+          type: string
+          nullable: false
+
+    ApplicationBody:
+      type: object
+      nullable: false
+      properties:
+        name:
+          type: string
+          nullable: false
+
+        key:
+          type: string
+          nullable: true
+
+        walletAddress:
+          type: string
+          nullable: false
+
+    CheckoutConfig:
+      type: object
+      required:
+        - 'config'
+        - 'name'
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        by:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+          required:
+            - 'locks'
+          properties:
+            locks:
+              type: object
+              additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Event:
+      type: object
+      required:
+        - 'name'
+        - 'slug'
+        - 'image'
+        - 'description'
+        - 'attributes'
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, deployed]
+        transactionHash:
+          type: string
+        eventType:
+          type: string
+          enum: [unlock, external]
+          default: unlock
+        attributes:
+          type: array
+          items:
+            type: object
+            required:
+              - trait_type
+              - value
+            properties:
+              trait_type:
+                type: string
+              value:
+                type: string
+
+    Verifier:
+      type: object
+      nullable: false
+      required: ['address']
+      properties:
+        address:
+          type: string
+          nullable: false
+
+        lockAddress:
+          type: string
+          nullable: false
+
+        lockManager:
+          type: string
+          nullable: false
+
+        network:
+          type: integer
+          nullable: false
+
+        name:
+          type: string
+          nullable: true
+
+    KeyMetadata:
+      type: object
+      nullable: false
+      properties:
+        token:
+          type: string
+          nullable: false
+
+        lockName:
+          type: string
+          nullable: false
+
+        lockAddress:
+          type: string
+          nullable: false
+
+        expiration:
+          type: integer
+          nullable: false
+
+        keyHolderAddress:
+          type: string
+          nullable: false
+
+    UserMetadataInput:
+      type: object
+      nullable: false
+      properties:
+        public:
+          type: object
+          nullable: true
+          default: {}
+          additionalProperties: true
+
+        protected:
+          type: object
+          nullable: true
+          default: {}
+          additionalProperties: true
+
+    UserMetadata:
+      type: object
+      nullable: false
+      required:
+        - 'lockAddress'
+        - 'userAddress'
+        - 'metadata'
+        - 'network'
+      properties:
+        network:
+          type: integer
+          nullable: false
+
+        lockAddress:
+          type: string
+          nullable: false
+
+        userAddress:
+          type: string
+          nullable: false
+
+        metadata:
+          $ref: '#/components/schemas/UserMetadataInput'
+
+    LockContractOptions:
+      type: object
+      nullable: false
+      properties:
+        name:
+          type: string
+
+        expirationDuration:
+          type: string
+          nullable: true
+
+        maxNumberOfKeys:
+          type: string
+          nullable: true
+
+        keyPrice:
+          type: string
+
+        creator:
+          type: string
+          nullable: true
+
+        currencyContractAddress:
+          type: string
+          nullable: true
+
+        publicLockVersion:
+          type: number
+          nullable: true
+
+    NotAuthenticated:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: 'You are not authorized or authenticated to perform this action.'
+          nullable: false
+
+    GenericInvalidBodyError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+          nullable: false
+
+        error:
+          type: string
+          nullable: true
+
+    GenericServerError:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+          nullable: false
+
+    GenericSuccess:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: 'Successfully fulfilled the request.'
+          nullable: false
+
+    GenericNotFound:
+      type: object
+      nullable: false
+      properties:
+        message:
+          type: string
+          default: 'resource not found'
+          nullable: false
+
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        billing_details:
+          type: object
+          properties:
+            address:
+              type: object
+              properties:
+                city:
+                  type: string
+                  format: nullable
+                country:
+                  type: string
+                line1:
+                  type: string
+                  format: nullable
+                line2:
+                  type: string
+                  format: nullable
+                postal_code:
+                  type: string
+                  format: nullable
+                state:
+                  type: string
+                  format: nullable
+            email:
+              type: string
+              format: nullable
+            name:
+              type: string
+            phone:
+              type: string
+              format: nullable
+        card:
+          type: object
+          properties:
+            brand:
+              type: string
+            checks:
+              type: object
+              properties:
+                address_line1_check:
+                  type: string
+                  format: nullable
+                address_postal_code_check:
+                  type: string
+                  format: nullable
+                cvc_check:
+                  type: string
+            country:
+              type: string
+            exp_month:
+              type: number
+            exp_year:
+              type: number
+            fingerprint:
+              type: string
+            funding:
+              type: string
+            generated_from:
+              type: string
+              format: nullable
+            last4:
+              type: string
+            networks:
+              type: object
+              properties:
+                available:
+                  type: array
+                  items:
+                    type: string
+                preferred:
+                  type: string
+                  format: nullable
+            three_d_secure_usage:
+              type: object
+              properties:
+                supported:
+                  type: boolean
+            wallet:
+              type: string
+              format: nullable
+        created:
+          type: number
+        customer:
+          type: string
+        livemode:
+          type: boolean
+        metadata:
+          type: object
+          additionalProperties: true
+
+        type:
+          type: string
+
+    LockSettings:
+      type: object
+      nullable: false
+      properties:
+        lockAddress:
+          type: string
+        network:
+          type: number
+        sendEmail:
+          type: boolean
+        slug:
+          type: string
+        replyTo:
+          type: string
+          nullable: true
+        creditCardPrice:
+          type: number
+          nullable: true
+        emailSender:
+          type: string
+          nullable: true
+        checkoutConfigId:
+          type: string
+          nullable: true
+        hookGuildId:
+          type: string
+          nullable: true
+        unlockFeeChargedToUser:
+          type: boolean
+        creditCardCurrency:
+          type: string
+          default: 'usd'
+        crossmintClientId:
+          type: string
+          nullable: true
+        promoCodes:
+          type: array
+          items:
+            type: string
+        passwords:
+          type: array
+          items:
+            type: string
+        requiredGitcoinPassportScore:
+          type: number
+          nullable: true
+        allowList:
+          type: array
+          items:
+            type: string
+          nullable: true
+
+    EventDetails:
+      type: object
+      nullable: false
+      properties:
+        eventName:
+          type: string
+        eventDescription:
+          type: string
+        eventDate:
+          type: string
+        eventTime:
+          type: string
+        eventAddress:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        eventUrl:
+          type: string
+
+    Rsvp:
+      type: object
+      nullable: false
+      properties:
+        lockAddress:
+          type: string
+        userAddress:
+          type: string
+        approval:
+          type: string
+        network:
+          type: number
+
+    Key:
+      type: object
+      properties:
+        token:
+          type: string
+        lockName:
+          type: string
+        expiration:
+          type: string
+        keyholderAddress:
+          type: string
+        keyManager:
+          type: string
+        lockAddress:
+          type: string
+        transactionsHash:
+          type: array
+          items:
+            type: string
+        email:
+          type: string
+
+    EventCollectionAssociation:
+      type: object
+      properties:
+        id:
+          type: integer
+        eventSlug:
+          type: string
+        collectionSlug:
+          type: string
+        isApproved:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    EventCollectionBody:
+      type: object
+      required:
+        - title
+        - description
+        - managerAddresses
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        coverImage:
+          type: string
+        banner:
+          type: string
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              url:
+                type: string
+        managerAddresses:
+          type: array
+          items:
+            type: string
+
+    EventCollection:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        coverImage:
+          type: string
+        banner:
+          type: string
+        links:
+          type: object
+          additionalProperties:
+            type: string
+        managerAddresses:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+
+    AddManagerBody:
+      type: object
+      required:
+        - newManagerAddress
+      properties:
+        newManagerAddress:
+          type: string
+
+    RemoveManagerBody:
+      type: object
+      required:
+        - managerAddressToRemove
+      properties:
+        managerAddressToRemove:
+          type: string
+
+    AddEventToCollectionBody:
+      type: object
+      required:
+        - eventSlug
+      properties:
+        eventSlug:
+          type: string
+
+    EventsInCollection:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+
+    ApproveEventBody:
+      type: object
+      required:
+        - eventSlug
+      properties:
+        eventSlug:
+          type: string
+          description: Slug of the event to approve.
+
+    BulkApproveEventsBody:
+      type: object
+      required:
+        - eventSlugs
+      properties:
+        eventSlugs:
+          type: array
+          description: Array of event slugs to approve.
+          items:
+            type: string
+
+    RemoveEventBody:
+      type: object
+      required:
+        - eventSlug
+      properties:
+        eventSlug:
+          type: string
+          description: Slug of the event to remove.
+
+    BulkRemoveEventsBody:
+      type: object
+      required:
+        - eventSlugs
+      properties:
+        eventSlugs:
+          type: array
+          description: Array of event slugs to remove.
+          items:
+            type: string
+    PrivyUserCheckBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address to check
+        address:
+          type: string
+          description: Ethereum wallet address to check
+      oneOf:
+        - required: ['email']
+        - required: ['address']
+
+    PrivyUserResponse:
+      type: object
+      required:
+        - exists
+        - user
+      properties:
+        exists:
+          type: boolean
+          description: Whether the user exists in Privy
+        user:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            isGuest:
+              type: boolean
+            customMetadata:
+              type: object
+            linkedAccounts:
+              type: array
+              items:
+                type: object
+            email:
+              type: object
+              properties:
+                address:
+                  type: string
+                  format: email
+                verifiedAt:
+                  type: string
+                  format: date-time
+                firstVerifiedAt:
+                  type: string
+                  format: date-time
+                latestVerifiedAt:
+                  type: string
+                  format: date-time
+            wallet:
+              type: object
+              properties:
+                address:
+                  type: string
+                chainType:
+                  type: string
+                verifiedAt:
+                  type: string
+                  format: date-time
+                firstVerifiedAt:
+                  type: string
+                  format: date-time
+                latestVerifiedAt:
+                  type: string
+                  format: date-time
+
+    SaveEventDataRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+        status:
+          type: string
+          enum: [pending, deployed]
+        transactionHash:
+          type: string
+        checkoutConfig:
+          $ref: '#/components/schemas/CheckoutConfig'
+
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+
+    UserAddress:
+      in: path
+      name: userAddress
+      required: true
+      description: User address.
+      schema:
+        type: string
+
+    VerifierAddress:
+      in: path
+      name: verifierAddress
+      required: true
+      description: User address to use as verifier
+      schema:
+        type: string
+
+    VerifierName:
+      in: path
+      name: verifierName
+      required: true
+      description: Name to easily identify verifier
+      schema:
+        type: string
+
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
+
+    Hash:
+      in: path
+      name: hash
+      required: true
+      description: Hash
+      schema:
+        type: string
+
+    TemplateId:
+      in: path
+      name: template
+      required: true
+      description: Template id for email
+      schema:
+        type: string
+
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
+
+    JobId:
+      in: path
+      name: jobId
+      required: true
+      description: Id of the exported job.
+      schema:
+        type: string
+
+  responses:
+    200.GenericSuccess:
+      description: 'Successfully completed the request.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericSuccess'
+
+    204.Empty:
+      description: No response. Request acknowledged.
+
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+
+    400.BadRequest:
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: 'Bad request due to invalid input.'
+
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+
+    401.Unauthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+
+    403.Forbidden:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+
+    403.NotAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+
+paths:
+  /v2/auth/nonce:
+    get:
+      operationId: nonce
+      description: 'Provide a unique nonce for using in sign in with ethereum'
+      parameters: []
+      responses:
+        200:
+          description: Unique nonce.
+          content:
+            html/text:
+              schema:
+                type: string
+                nullable: false
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/auth/login:
+    post:
+      operationId: login
+      description: 'Login as a user using Sign in with Ethereum message signed by the wallet address.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                signature:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResult'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/auth/privy:
+    post:
+      operationId: loginWithPrivy
+      description: Verify an access token using Privy's library and authenticate the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  description: The Privy access token to verify
+                walletAddress:
+                  type: string
+                  description: The wallet address from the user
+              required:
+                - accessToken
+                - walletAddress
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResult'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/auth/logout:
+    post:
+      operationId: logout
+      security:
+        - User: []
+      description: Logout from locksmith. This will invalidate all your session tokens.
+
+      responses:
+        200:
+          $ref: '#/components/responses/200.GenericSuccess'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/auth/revoke:
+    post:
+      operationId: revoke
+      security:
+        - User: []
+      description: Invalidate a session.
+      responses:
+        200:
+          $ref: '#/components/responses/200.GenericSuccess'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/auth/user:
+    get:
+      operationId: user
+      description: Get user details.
+      security:
+        - User: []
+      responses:
+        200:
+          description: Return the user details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/applications/list:
+    get:
+      operationId: applications
+      security:
+        - User: []
+      description: List applications created the user.
+      responses:
+        200:
+          description: List of applications owned by the authenticated user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Application'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/applications:
+    post:
+      operationId: createApplication
+      security:
+        - User: []
+      description: Create application associated with user wallet.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationBody'
+
+      responses:
+        201:
+          description: Created application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/applications/:id:
+    delete:
+      operationId: deleteApplication
+      security:
+        - User: []
+
+      description: Delete application by id.
+      parameters:
+        - in: path
+          required: true
+          schema:
+            type: string
+          name: id
+          description: Application id.
+      responses:
+        200:
+          description: Deleted application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccess'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+    put:
+      parameters:
+        - in: path
+          required: true
+          schema:
+            type: string
+          name: id
+          description: Application id.
+      operationId: updateApplication
+      security:
+        - User: []
+      description: Update application by id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationBody'
+      responses:
+        200:
+          description: Updated application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/verifier/list/{network}/{lockAddress}:
+    get:
+      deprecated: true
+      operationId: verifiers
+      security:
+        - User: ['lockManager']
+      description: List of verifiers for the lock address. (deprecated in favor of eventVerifiers)
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: 'list of verifier address.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+
+        204:
+          $ref: '#/components/responses/204.Empty'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/verifier/{network}/{lockAddress}/{verifierAddress}:
+    put:
+      deprecated: true
+      operationId: createVerifier
+      security:
+        - User: ['lockManager']
+      description: Create verifier. (deprecated in favor of addEventVerifier)
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/VerifierAddress'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verifierName:
+                  type: string
+                  description: optional verifier name
+      responses:
+        201:
+          description: Added verifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verifier'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        409:
+          $ref: '#/components/responses/409.Conflict'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+    delete:
+      deprecated: true
+      operationId: deleteVerifier
+      security:
+        - User: []
+      description: Remove verifier. (deprecated in favor of deleteEventVerifier)
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/VerifierAddress'
+      responses:
+        200:
+          description: List of remaining verifiers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/verifier/{network}/lock/{lockAddress}/address/{verifierAddress}:
+    get:
+      deprecated: true
+      operationId: verifier
+      security:
+        - User: ['lockManager']
+      description: Check if an address is a verifier of the lock. (deprecated in favor of eventVerifier)
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/VerifierAddress'
+      responses:
+        200:
+          description: Address is a verifier on the lock address.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                    default: true
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/events/{slug}/verifiers:
+    get:
+      operationId: eventVerifiers
+      security:
+        - User: ['lockManager']
+      description: List of verifiers for an event.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      responses:
+        200:
+          description: 'List of verifier addresses'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+
+        204:
+          $ref: '#/components/responses/204.Empty'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/events/{slug}/verifiers/{verifierAddress}:
+    put:
+      operationId: addEventVerifier
+      security:
+        - User: ['lockManager']
+      description: Adds a verifier for an event.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+        - $ref: '#/components/parameters/VerifierAddress'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verifierName:
+                  type: string
+                  description: optional verifier name
+      responses:
+        201:
+          description: Added verifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verifier'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        409:
+          $ref: '#/components/responses/409.Conflict'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+    delete:
+      operationId: deleteEventVerifier
+      security:
+        - User: []
+      description: Removes a verifier for an event.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+        - $ref: '#/components/parameters/VerifierAddress'
+      responses:
+        200:
+          description: List of remaining verifiers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Verifier'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/events/{slug}/approve-refunds:
+    post:
+      operationId: approveRefunds
+      security:
+        - User: ['lockManager']
+      description: Approves refunds for an event.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - network
+              properties:
+                amount:
+                  type: number
+                  nullable: false
+                currency:
+                  type: string
+                  nullable: true
+                network:
+                  type: number
+                  nullable: false
+
+      responses:
+        201:
+          description: Approves refunds for an event.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - format
+                  - tree
+                  - values
+                properties:
+                  format:
+                    type: string
+                    nullable: false
+                  values:
+                    type: array
+                    items:
+                      type: object
+                  tree:
+                    type: array
+                    items:
+                      type: string
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+  /v2/events/approved-refunds/{slug}:
+    get:
+      operationId: approvedRefunds
+      description: Returns the merkle proof of an approved refund.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      responses:
+        200:
+          description: The merkle proof of an approved refund.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - format
+                  - tree
+                  - values
+                properties:
+                  format:
+                    type: string
+                    enum: ['standard-v1']
+                    nullable: false
+                  leafEncoding:
+                    type: array
+                    items:
+                      type: string
+                    nullable: false
+                  values:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: array
+                          items: {}
+                          nullable: false
+                        treeIndex:
+                          type: number
+                  tree:
+                    type: array
+                    items:
+                      type: string
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/sign:
+    get:
+      operationId: signTicket
+      security:
+        - User: ['keyOwner']
+      description: Generate signature to prove validity of token.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Returns signature and payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: string
+                    nullable: false
+                  signature:
+                    type: string
+                    nullable: false
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}/check:
+    put:
+      operationId: checkTicket
+      deprecated: true
+      security:
+        - User: ['Verifier']
+      description: Mark a lock ticket as checked in.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        202:
+          description: Ticket is checked in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccess'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        409:
+          $ref: '#/components/responses/409.Conflict'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/ticket/{slug}/{network}/lock/{lockAddress}/key/{keyId}/check:
+    put:
+      operationId: checkEventTicket
+      security:
+        - User: ['Verifier']
+      description: Mark an event ticket as checked in.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        202:
+          description: Ticket is checked in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccess'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        409:
+          $ref: '#/components/responses/409.Conflict'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/ticket/{slug}/{network}/lock/{lockAddress}/key/{keyId}:
+    get:
+      operationId: getEventTicket
+      security:
+        - User: []
+      description: get a ticket for a key by event.
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Successfully retrieved the ticket.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                required:
+                  - name
+                  - lockAddress
+                  - keyId
+                  - manager
+                  - publicLockVersion
+                  - userMetadata
+                  - isVerifier
+                  - attributes
+                  - image
+                  - description
+                  - owner
+                  - expiration
+
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                  name:
+                    type: string
+                  owner:
+                    type: string
+                  manager:
+                    type: string
+                  lockAddress:
+                    type: string
+                  image:
+                    type: string
+                  description:
+                    type: string
+                  checkedInAt:
+                    type: number
+                  userMetadata:
+                    type: object
+                    additionalProperties: true
+                  expiration:
+                    type: string
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - 'value'
+                      properties:
+                        trait_type:
+                          type: string
+                        value:
+                          type: string
+                        display_type:
+                          type: string
+                  publicLockVersion:
+                    type: string
+                  isVerifier:
+                    description: Whether the user who requested the ticket can verify the ticket.
+                    type: boolean
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/email:
+    post:
+      operationId: emailTicket
+      security:
+        - User: ['LockManager']
+      description: Send QR code by email.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Email sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sent:
+                    type: boolean
+                    default: true
+                    nullable: false
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/qr:
+    get:
+      operationId: ticketQRCode
+      security:
+        - User: ['user', 'lockManager']
+      description: Get QR code for the key.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: QR code image.
+          content:
+            'image/gif':
+              schema:
+                nullable: true
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/ticket/{network}/{lockAddress}/{keyId}/verification:
+    get:
+      operationId: ticketVerificationUrl
+      security:
+        - User: ['user', 'lockManager']
+      description: Get the verification URL for the key.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: JSON object containing the verification url
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                properties:
+                  verificationUrl:
+                    type: string
+                    nullable: false
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/metadata/{network}/locks/{lockAddress}:
+    get:
+      operationId: lockMetadata
+      description: Get metadata for lock address.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: JSON metadata containing name, description, and custom properties for lock.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                additionalProperties: true
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+    put:
+      operationId: updateLockMetadata
+      security:
+        - User: ['lockManager']
+      description: Update or create metadata for lock address.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: JSON metadata inside metadata field will be saved.
+              type: object
+              nullable: false
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties: true
+      responses:
+        201:
+          description: JSON metadata containing name, description, and custom properties for lock address.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                additionalProperties: true
+
+        204:
+          description: JSON metadata containing name, description, and custom properties for lock address.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                additionalProperties: true
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/metadata/{network}/locks/{lockAddress}/keys/{keyId}:
+    get:
+      operationId: keyMetadata
+      security:
+        - User: []
+        - {}
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      description: Get key and user metadata.
+      responses:
+        200:
+          description: JSON metadata containing name, description, custom properties and user metadata if authenticated for a key.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                    nullable: false
+                  lockAddress:
+                    type: string
+                    nullable: false
+                  network:
+                    type: integer
+                    nullable: false
+                additionalProperties: true
+
+    put:
+      operationId: updateKeyMetadata
+      security:
+        - User: ['lockManager']
+      description: Update or create metadata for key.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              description: JSON metadata inside metadata field will be saved.
+              type: object
+              nullable: false
+              properties:
+                metadata:
+                  type: object
+                  additionalProperties: true
+      responses:
+        201:
+          description: JSON metadata containing name, description, and custom properties for key.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                additionalProperties: true
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/metadata/{network}/locks/{lockAddress}/users/{userAddress}:
+    put:
+      operationId: updateUserMetadata
+      security:
+        - User: ['user', 'lockManager']
+
+      description: Update or create user metadata for lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/UserAddress'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                metadata:
+                  $ref: '#/components/schemas/UserMetadataInput'
+
+      responses:
+        204:
+          description: Return user metadata saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                nullable: false
+                additionalProperties: true
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        409:
+          $ref: '#/components/responses/409.Conflict'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+    get:
+      operationId: getUserMetadata
+      security:
+        - User: ['user']
+
+      description: get user metadata for a lock.
+      parameters:
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/UserAddress'
+      responses:
+        200:
+          description: Returns user metadata if authenticated for a lock.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMetadata'
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/metadata/users:
+    put:
+      operationId: updateUsersMetadata
+      security:
+        - User: []
+        - {}
+      description: Update or create user metadata for lock.
+      requestBody:
+        required: true
+        description: users array containing user metadata.
+        content:
+          application/json:
+            schema:
+              type: object
+              nullable: false
+              properties:
+                users:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UserMetadata'
+
+      responses:
+        201:
+          description: Array containing user metadata which was created. If the user already has metadata, it will not be updated and present in the array.
+          content:
+            application/json:
+              schema:
+                type: object
+                nullable: false
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserMetadata'
+
+                  error:
+                    description: Array containing user addresses for which metadata was not created.
+                    type: array
+                    items:
+                      type: string
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/users/{emailAddress}/{selectedProvider}/waas:
+    post:
+      operationId: getWaasToken
+      description: Gets Coinbase WAAS token for user by email and selected provider.
+      parameters:
+        - name: captcha
+          in: header
+          required: true
+          description: Recaptcha value to pass.
+          schema:
+            type: string
+        - name: emailAddress
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: selectedProvider
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: JSON object containing sign in token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/users/{emailAddress}/existNextAuth:
+    get:
+      operationId: getUserAccountType
+      description: Gets User account type by email.
+      parameters:
+        - name: emailAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userAccountType:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                        [
+                          'UNLOCK_ACCOUNT',
+                          'GOOGLE_ACCOUNT',
+                          'PASSKEY_ACCOUNT',
+                          'EMAIL_CODE',
+                        ]
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/users/{emailAddress}/send-verification-code:
+    get:
+      operationId: sendVerificationCode
+      description: Sends a verification code to the user's email if the current code is expired or does not exist.
+      parameters:
+        - name: captcha
+          in: header
+          required: true
+          description: Recaptcha value to pass.
+          schema:
+            type: string
+        - name: emailAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Email code sent successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/users/{emailAddress}/verify-email-code:
+    post:
+      operationId: verifyEmailCode
+      description: Verifies the email code sent to the users email address.
+      parameters:
+        - name: emailAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+      responses:
+        200:
+          description: Verification successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+        400:
+          description: Missing parameters or invalid/expired verification code.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: Verification code not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /users/{emailAddress}/passwordEncryptedPrivateKey:
+    put:
+      operationId: updateUserEncryptedPrivateKey
+      security:
+        - User: []
+      description: Updates a user's private key, using their email address as key. In the case of failure a rejected promise is returned to the caller.
+      parameters:
+        - name: emailAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                token:
+                  type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  emailAddress:
+                    type: string
+                  user:
+                    type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /users/{emailAddress}/privatekey:
+    get:
+      operationId: getUserPrivateKey
+      security:
+        - User: []
+      description: Given a user's email address, retrieves their private key. In the case of failure a rejected promise is returned to the caller.
+      parameters:
+        - name: emailAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  passwordEncryptedPrivateKey:
+                    type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /users/{emailAddress}/recoveryphrase:
+    get:
+      operationId: getUserRecoveryPhrase
+      security:
+        - User: []
+      description: Given a user's email address, retrieves their recovery phrase. In the case of failure a rejected promise is returned to the caller.
+      parameters:
+        - name: emailAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  emailAddress:
+                    type: string
+                  recoveryPhrase:
+                    type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /users/{publicKey}/eject:
+    post:
+      operationId: ejectUser
+      security:
+        - User: []
+      description: Ejects a user given their public key. In the case of failure, a rejected promise is returned to the caller.
+      parameters:
+        - name: publicKey
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Structured data used to generate the signature
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publicKey:
+                    type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        401:
+          $ref: '#/components/responses/401.Unauthorized'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /api/captcha:
+    get:
+      operationId: getDataForRecipientsAndCaptcha
+      security:
+        - User: []
+      description: Retrieves data for recipients and captcha.
+      parameters:
+        - name: recipients[]
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: captchaValue
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: lockAddress
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: network
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                  signer:
+                    type: string
+                  signatures:
+                    type: array
+                    items:
+                      type: string
+        400:
+          $ref: '#/components/responses/400.BadRequest'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/{network}/locks/{lockAddress}/keys:
+    get:
+      deprecated: true
+      operationId: keys
+      security:
+        - User: []
+        - Application: []
+
+      description: List of lock keys by network with additional metadata if the caller is the lockManager (deprecated, use keys-by-page)
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+          description: Query you want to search for.
+        - in: query
+          name: filterKey
+          required: true
+          schema:
+            type: string
+          description: The key you want to search on.
+        - in: query
+          name: expiration
+          schema:
+            type: string
+          description: Expiration time
+        - in: query
+          name: approval
+          schema:
+            type: string
+          description: Approval status (relevant for offchain approvals on events for example)
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number when paginating
+        - in: query
+          name: max
+          schema:
+            type: integer
+          description: Maximum number of items to get by page
+      responses:
+        200:
+          description: List of keys matching the query
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: array
+                items:
+                  $ref: '#/components/schemas/KeyMetadata'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/{network}/locks/{lockAddress}/keys-by-page:
+    get:
+      operationId: keysByPage
+      security:
+        - User: []
+        - Application: []
+
+      description: List of lock keys by network with additional metadata if the caller is the lockManager
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+          description: Query you want to search for.
+        - in: query
+          name: filterKey
+          required: true
+          schema:
+            type: string
+          description: The key you want to search on.
+        - in: query
+          name: expiration
+          schema:
+            type: string
+          description: Expiration time
+        - in: query
+          name: approval
+          schema:
+            type: string
+          description: Approval status (relevant for offchain approvals on events for example)
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number when paginating
+        - in: query
+          name: max
+          schema:
+            type: integer
+          description: Maximum number of items to get by page
+      responses:
+        200:
+          description: List of keys matching the query
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      byPage:
+                        type: integer
+                  keys:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeyMetadata'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/{network}/locks/{lockAddress}/export-keys:
+    get:
+      operationId: exportKeys
+      security:
+        - User: []
+        - Application: []
+      description: Starts Job process to get all the keys for the given lock
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+          description: Query you want to search for.
+        - in: query
+          name: filterKey
+          required: true
+          schema:
+            type: string
+          description: The key you want to search on.
+        - in: query
+          name: expiration
+          schema:
+            type: string
+          description: Expiration time
+        - in: query
+          name: approval
+          schema:
+            type: string
+          description: Approval status (relevant for offchain approvals on events for example)
+      responses:
+        '200':
+          description: Successfully started Keys Job
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId:
+                    type: string
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+  /v2/api/{network}/locks/{lockAddress}/export-keys/{jobId}:
+    get:
+      operationId: getExportedKeys
+      security:
+        - User: []
+        - Application: []
+      description: Get job result by job id
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        '200':
+          description: Successfully retrieved job result
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      byPage:
+                        type: integer
+                  keys:
+                    nullable: false
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeyMetadata'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Job not found
+
+  /purchase:
+    get:
+      operationId: balance
+      responses:
+        200:
+          description: Balances for purchaser addresses on each network.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                type: object
+                additionalProperties:
+                  type: object
+                  nullable: true
+                  properties:
+                    address:
+                      type: string
+
+                    name:
+                      type: string
+
+                    balance:
+                      type: string
+        500:
+          $ref: '#/components/responses/500.InternalError'
+  /v2/api/{network}/price:
+    get:
+      operationId: price
+      parameters:
+        - $ref: '#/components/parameters/Network'
+
+        - in: query
+          name: amount
+          required: false
+          description: Amount of tokens you want to get the price for in USD.
+          schema:
+            type: number
+
+        - in: query
+          name: address
+          required: false
+          description: The erc20 address you want to get the price for. If nothing is passed, the API will return the native token price.
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: Get price for the native token or any erc20 on the network.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      decimals:
+                        type: number
+                        nullable: true
+                      price:
+                        type: number
+                      timestamp:
+                        type: number
+                      symbol:
+                        type: string
+                      confidence:
+                        type: number
+                      priceInAmount:
+                        type: number
+                        nullable: true
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/api/contracts/{network}/lock:
+    post:
+      operationId: createLockContract
+      security:
+        - User: []
+        - Application: []
+
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - name: captcha
+          in: header
+          required: true
+          description: Recaptcha value to pass.
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockContractOptions'
+
+      responses:
+        201:
+          description: Transaction hash of the lock creation transaction.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionHash:
+                    type: string
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/purchase/intent/{network}/locks/{lockAddress}:
+    post:
+      operationId: purchase
+      security:
+        - User: []
+      description: Create purchase intent for stripe.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - recipients
+                - stripeTokenId
+                - pricing
+
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+
+                stripeTokenId:
+                  type: string
+
+                pricing:
+                  type: number
+
+                recurring:
+                  type: number
+                  nullable: true
+
+                data:
+                  type: array
+                  items:
+                    type: string
+
+                referrers:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        200:
+          description: Created payment intent client secret, account, and other details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientSecret:
+                    type: string
+                  stripeAccount:
+                    type: string
+                  totalPriceInDents:
+                    type: number
+                  pricing:
+                    nullable: true
+                    type: object
+                    properties:
+                      keyPrice:
+                        type: number
+                        nullable: true
+                      unlockServiceFee:
+                        type: number
+                        nullable: true
+                      creditCardProcessing:
+                        type: number
+                        nullable: true
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+  /v2/subscriptions/{network}/locks/{lockAddress}/keys/{keyId}:
+    delete:
+      operationId: cancelSubscription
+      description: Cancel a fiat subscription.
+      security:
+        - User: []
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+
+      responses:
+        204:
+          description: Successfully deleted the subscription.
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+    get:
+      operationId: getSubscription
+      description: Get an active subscription associated with the key. It can be fiat or crypto.
+      security:
+        - User: []
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+
+      responses:
+        200:
+          description: Any active subscription.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscriptions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        next:
+                          type: number
+                          nullable: true
+
+                        balance:
+                          type: object
+                          properties:
+                            symbol:
+                              type: string
+
+                            amount:
+                              type: string
+
+                            decimals:
+                              type: number
+
+                        price:
+                          type: object
+                          properties:
+                            symbol:
+                              type: string
+
+                            amount:
+                              type: string
+
+                            decimals:
+                              type: number
+
+                        approvedRenewals:
+                          type: string
+                          description: Approved number of renewals by user.
+
+                        possibleRenewals:
+                          type: string
+                          description: Possible number of renewals based on the user account balance.
+
+                        type:
+                          enum:
+                            - crypto
+                            - fiat
+                          description: The type of payment method used for the subscription.
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/claim/{network}/locks/{lockAddress}:
+    post:
+      security:
+        - User: []
+      operationId: claim
+      description: Claim a membership key for a lock. If not authenticated, requires an email in the body.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - name: captcha
+          in: header
+          required: true
+          description: Recaptcha value to pass.
+          schema:
+            type: string
+
+        - name: recipient
+          in: header
+          required: false
+          description: Recipient address for key
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                email:
+                  type: string
+                  description: Email address of the recipient
+                recipient:
+                  type: string
+                  description: Recipient address for key
+                referrer:
+                  type: string
+                  description: Referrer address used to mint. This may get overwritten.
+
+      responses:
+        200:
+          description: Successfully claimed the key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionHash:
+                    type: string
+                  owner:
+                    type: string
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/purchase/setup:
+    post:
+      operationId: setupPayment
+      security:
+        - User: []
+      description: Setup a payment method for user.
+
+      responses:
+        200:
+          description: Created setup intent client secret.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientSecret:
+                    type: string
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/purchase/list:
+    get:
+      operationId: listPaymentMethods
+      security:
+        - User: []
+      description: List payment methods for user.
+      responses:
+        200:
+          description: Stripe payment methods for user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  methods:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentMethod'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}/generate:
+    get:
+      operationId: generateTicket
+      security:
+        - User: []
+      description: Generate a ticket for a key.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Successfully generated the ticket.
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}:
+    get:
+      operationId: getTicket
+      security:
+        - User: []
+      description: get a ticket for a key by lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Successfully retrieved the ticket.
+          content:
+            application/json:
+              schema:
+                nullable: false
+                required:
+                  - name
+                  - lockAddress
+                  - keyId
+                  - manager
+                  - publicLockVersion
+                  - userMetadata
+                  - isVerifier
+                  - attributes
+                  - image
+                  - description
+                  - owner
+                  - expiration
+
+                type: object
+                properties:
+                  keyId:
+                    type: string
+                  name:
+                    type: string
+                  owner:
+                    type: string
+                  manager:
+                    type: string
+                  lockAddress:
+                    type: string
+                  image:
+                    type: string
+                  description:
+                    type: string
+                  checkedInAt:
+                    type: number
+                  userMetadata:
+                    type: object
+                    additionalProperties: true
+                  expiration:
+                    type: string
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - 'value'
+                      properties:
+                        trait_type:
+                          type: string
+                        value:
+                          type: string
+                        display_type:
+                          type: string
+                  publicLockVersion:
+                    type: string
+                  isVerifier:
+                    description: Whether the user who requested the ticket can verify the ticket.
+                    type: boolean
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /{network}/lock/{lockAddress}/stripe:
+    delete:
+      operationId: disconnectStripe
+      security:
+        - User: []
+      description: Disconnect stripe account.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully disconnected stripe account.
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /lock/{lockAddress}/stripe-connected:
+    get:
+      operationId: getLockStripeConnectionDetails
+      description: Returns Stripe connection details
+      parameters:
+        - $ref: '#/components/parameters/LockAddress'
+        - in: query
+          name: chain
+          required: true
+          schema:
+            type: number
+          description: Lock network
+
+      responses:
+        200:
+          description: Successfully returns lock Stripe connection details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  countrySpec:
+                    type: object
+                    properties:
+                      supported_payment_currencies:
+                        type: array
+                        items:
+                          type: string
+                  account:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      charges_enabled:
+                        type: boolean
+                      payouts_enabled:
+                        type: boolean
+                      requirements:
+                        type: object
+                        properties:
+                          disabled_reason:
+                            type: string
+                  connected:
+                    type: number
+
+  /v2/images/upload:
+    post:
+      operationId: uploadImages
+      security:
+        - User: []
+      description: Upload images to locksmith
+
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        201:
+          description: Successfully uploaded images.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        publicUrl:
+                          type: string
+                        originamName:
+                          type: string
+                        mimetype:
+                          type: string
+                        contentType:
+                          type: string
+                        size:
+                          type: number
+                        key:
+                          type: string
+                        metadata:
+                          type: object
+                          properties:
+                            fieldName:
+                              type: string
+                            createdBy:
+                              type: string
+                        encoding:
+                          type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/transfer/{network}/locks/{lockAddress}/keys/{keyId}:
+    post:
+      operationId: createTransferCode
+      security:
+        - User: []
+      description: Create a transfer code to transfer an airdropped key to an email address.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+
+      responses:
+        200:
+          description: Successfully created transfer code and sent an email to the recipient.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'owner'
+                  - 'lock'
+                  - 'token'
+                  - 'deadline'
+                  - 'transferCode'
+                properties:
+                  owner:
+                    type: string
+                  lock:
+                    type: string
+                  token:
+                    type: string
+                  deadline:
+                    type: number
+                  transferCode:
+                    type: string
+                    description: Part of the transfer code that is required to be used with the part sent to the recipient.
+
+        404:
+          description: Key not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/transfer/done:
+    post:
+      operationId: transferDone
+      security:
+        - User: []
+      description: Finalize the transfer of a key to a recipient. This is to copy over any locksmith related data to the recipient's account.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - 'transferSignature'
+                - 'owner'
+                - 'lock'
+                - 'token'
+                - 'network'
+                - 'deadline'
+              properties:
+                transferSignature:
+                  type: string
+                  description: The signature of the transfer code sent to the recipient.
+                owner:
+                  type: string
+                lock:
+                  type: string
+                token:
+                  type: string
+                network:
+                  type: number
+                deadline:
+                  type: number
+      responses:
+        200:
+          description: Successfully transferred key to recipient.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        403:
+          description: Transfer not authorized by locksmith
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        404:
+          description: Key not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/receipts/all/{network}/{lockAddress}:
+    get:
+      operationId: getReceiptsStatus
+      security:
+        - User: []
+      description: Retrieve the status of receipt generation for a lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully retrieved receipt generation status.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                  - createdAt
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        payload:
+                          type: object
+                          properties:
+                            status:
+                              type: string
+                              enum: ['pending', 'success', 'failed']
+                            key:
+                              type: string
+                            result:
+                              type: array
+                              items:
+                                type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+        404:
+          description: No receipt generation status found.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+
+    post:
+      operationId: createDownloadReceiptsRequest
+      security:
+        - User: []
+      description: Request the creation of a ZIP file containing all receipts for a lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Receipt generation initiated or already pending.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: ['pending']
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+
+  /v2/receipts/download/{network}/{lockAddress}:
+    get:
+      operationId: downloadReceipts
+      security:
+        - User: []
+      description: Download the ZIP file containing all receipts for a lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      responses:
+        200:
+          description: Successfully downloaded the ZIP file.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        400:
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+        404:
+          description: ZIP file not found or not generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+
+  /v2/receipts/{network}/{lockAddress}/all:
+    get:
+      operationId: getReceipts
+      security:
+        - User: []
+      description: Get all receipts for a lock
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully retrieved receipts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        receiptNumber:
+                          type: string
+                        timestamp:
+                          type: string
+                        sender:
+                          type: string
+                        payer:
+                          type: string
+                        recipient:
+                          type: string
+                        lockAddress:
+                          type: string
+                        tokenAddress:
+                          type: string
+                        gasTotal:
+                          type: string
+                        amountTransferred:
+                          type: string
+                        network:
+                          type: number
+                        supplierAddress:
+                          type: string
+
+        500:
+          description: Failed to retrieve receipt details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+        404:
+          description: Impossible to retrieve receipt details.
+
+  /v2/receipts/{network}/{lockAddress}/{hash}:
+    get:
+      operationId: getReceipt
+      security:
+        - User: []
+      description: Get receipt details
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/Hash'
+
+      responses:
+        200:
+          description: Successfully receipt details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  purchaser:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      fullname:
+                        type: string
+                      businessName:
+                        type: string
+                      addressLine1:
+                        type: string
+                      addressLine2:
+                        type: string
+                      city:
+                        type: string
+                      state:
+                        type: string
+                      zip:
+                        type: string
+                      country:
+                        type: string
+                  supplier:
+                    type: object
+                    properties:
+                      supplierName:
+                        type: string
+                      vat:
+                        type: string
+                      servicePerformed:
+                        type: string
+                      addressLine1:
+                        type: string
+                      addressLine2:
+                        type: string
+                      city:
+                        type: string
+                      state:
+                        type: string
+                      zip:
+                        type: string
+                      country:
+                        type: string
+                  receipt:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      timestamp:
+                        type: number
+                      sender:
+                        type: string
+                      payer:
+                        type: string
+                      recipient:
+                        type: string
+                      lockAddress:
+                        type: string
+                      tokenAddress:
+                        type: string
+                      gasTotal:
+                        type: number
+                      amountTransferred:
+                        type: number
+
+        500:
+          description: Failed to retrieve receipt details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+        404:
+          description: Impossible to retrieve receipt details.
+
+    post:
+      operationId: saveReceipt
+      security:
+        - User: []
+      description: Create purchaser details
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/Hash'
+
+      responses:
+        200:
+          description: Successfully creates purchaser details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fullname:
+                    type: string
+                  businessName:
+                    type: string
+                  addressLine1:
+                    type: string
+                  addressLine2:
+                    type: string
+                  city:
+                    type: string
+                  state:
+                    type: string
+                  zip:
+                    type: string
+                  country:
+                    type: string
+
+        500:
+          description: Failed to update or create purchaser details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/receipts-base/{network}/{lockAddress}:
+    get:
+      operationId: getReceiptsBase
+      security:
+        - User: []
+      description: Get supplier details
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully get supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  supplierName:
+                    type: string
+                  vat:
+                    type: string
+                  vatBasisPointsRate:
+                    type: number
+                  servicePerformed:
+                    type: string
+                  addressLine1:
+                    type: string
+                  addressLine2:
+                    type: string
+                  city:
+                    type: string
+                  state:
+                    type: string
+                  zip:
+                    type: string
+                  country:
+                    type: string
+
+        204:
+          description: No receipts found
+
+        500:
+          description: Failed to retrieve supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+        404:
+          description: Impossible to retrieve supplier details.
+
+    post:
+      operationId: saveReceiptsBase
+      security:
+        - User: []
+      description: Create supplier details.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully creates supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  supplierName:
+                    type: string
+                  vat:
+                    type: string
+                  vatBasisPointsRate:
+                    type: number
+                  servicePerformed:
+                    type: string
+                  addressLine1:
+                    type: string
+                  addressLine2:
+                    type: string
+                  city:
+                    type: string
+                  state:
+                    type: string
+                  zip:
+                    type: string
+                  country:
+                    type: string
+
+        500:
+          description: Failed to update or create supplier details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/email/{network}/locks/{lockAddress}/custom/{template}:
+    get:
+      operationId: getCustomEmailContent
+      security:
+        - User: []
+      description: Get custom email content for a specific template and lock details
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/TemplateId'
+
+      responses:
+        200:
+          description: Successfully get custom template content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lockAddress:
+                    type: string
+                  network:
+                    type: number
+                  template:
+                    type: string
+                  content:
+                    type: string
+
+        500:
+          description: Could not get custom email content.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+        404:
+          description: Custom email content not found for this template.
+
+    post:
+      operationId: saveCustomEmailContent
+      security:
+        - User: []
+      description: Save custom email content for a specif lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/TemplateId'
+
+      responses:
+        200:
+          description: Custom email content successfully saved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lockAddress:
+                    type: string
+                  network:
+                    type: number
+                  template:
+                    type: string
+                  content:
+                    type: string
+
+        500:
+          description: Could not save custom email content.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - 'message'
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/checkout/{id}:
+    delete:
+      operationId: deleteCheckoutConfig
+      security:
+        - User: []
+      description: Delete a checkout config
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The id of the checkout config
+
+      responses:
+        200:
+          description: Checkout config deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+    get:
+      operationId: getCheckoutConfig
+      security:
+        - User: []
+
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The id of the checkout config
+
+      responses:
+        200:
+          description: Checkout config for the given id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutConfig'
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+    put:
+      operationId: updateCheckoutConfig
+      security:
+        - User: []
+      description: A new checkout config is created or updated if it already exists
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            nullable: true
+            type: string
+          description: This is optional. If you don't pass an ID, a new config will be created. If you pass an ID, the config will be created.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - 'config'
+                - 'name'
+              properties:
+                name:
+                  type: string
+                config:
+                  type: object
+                  additionalProperties: true
+
+      responses:
+        200:
+          description: Checkout config for the updated id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutConfig'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/checkout/list:
+    get:
+      operationId: listCheckoutConfigs
+      security:
+        - User: []
+      description: A list of all checkout configs created by the user
+
+      responses:
+        200:
+          description: Checkout config for the updated id.
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CheckoutConfig'
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/purchase/payment-methods:
+    delete:
+      operationId: removePaymentMethods
+      security:
+        - User: []
+      description: Remove all payment methods for a user
+      responses:
+        200:
+          description: Successfully removed all payment methods
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/api/credit-card-details/{network}/locks/{lockAddress}:
+    get:
+      operationId: isCardPaymentEnabledForLock
+      description: Returns if credit card payment are enable for a lock
+
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully returns credit card enabled status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  creditCardEnabled:
+                    type: boolean
+
+  /v2/stripe/connect/{network}/locks/{lockAddress}:
+    post:
+      operationId: connectStripeAccount
+      security:
+        - User: []
+      description: Connect a stripe account to a lock
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - baseUrl
+              type: object
+              properties:
+                baseUrl:
+                  type: string
+                stripeAccount:
+                  type: string
+
+      responses:
+        200:
+          description: Successfully connected stripe account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  # stripe account links
+                  url: # The url to redirect the user to
+                    type: string
+                  created:
+                    type: number
+                  expiresAt:
+                    type: number
+                  object:
+                    type: string
+
+        400:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/stripe/connections:
+    get:
+      operationId: getStripeConnections
+      security:
+        - User: []
+      description: Lists the locks connected to Stripe for a user
+      responses:
+        200:
+          description: List of locks previously connected to Stripe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: object
+                  error:
+                    type: string
+                    nullable: true
+
+        400:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/events/{network}/{lockAddress}:
+    get:
+      deprecated: true
+      operationId: getEventDetails
+      description: Get the event details from lock
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully get event details by lock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetails'
+
+  /v2/lock-settings/slug/{slug}:
+    get:
+      operationId: getLockSettingsBySlug
+      description: Get lock setting by slug
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+
+      responses:
+        200:
+          description: Successfully get settings for lock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockSettings'
+
+  /v2/lock-settings/{network}/locks/{lockAddress}:
+    get:
+      operationId: getLockSettings
+      description: Get saved lock settings
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully get settings for lock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockSettings'
+
+        404:
+          description: Setting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        500:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+    post:
+      operationId: saveLockSetting
+      security:
+        - User: []
+      description: Save lock settings
+
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockSettings'
+
+      responses:
+        200:
+          description: Successfully saved settings for lock
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sendEmail:
+                    type: boolean
+
+        500:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+  /v2/certificate/{network}/lock/{lockAddress}/key/{keyId}/generate:
+    get:
+      operationId: generateCertificate
+      description: Generate certificate for specific key
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+
+      responses:
+        200:
+          description: Successfully get certification for a key
+
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+
+        500:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /v2/hooks/guild:
+    get:
+      operationId: getDataForRecipientsAndGuild
+      description: Get the data for recipients and guild. This is to be used in conjunction with the Guild
+      parameters:
+        - in: query
+          name: network
+          required: true
+          description: The network the lock is on
+          schema:
+            type: number
+        - in: query
+          name: lockAddress
+          description: The address of the lock
+          schema:
+            type: string
+        - in: query
+          name: recipients
+          description: The list of recipients for the purchase
+          schema:
+            type: array
+            items:
+              type: string
+
+      responses:
+        200:
+          description: the list of data inputs to use for the transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: string
+  /v2/hooks/gitcoin:
+    get:
+      operationId: getDataForRecipientsAndGitcoinPassport
+      description: Get the data for recipients and gitcoin passport. This is to be used in conjunction with the Gitcoin passport scorer.
+      parameters:
+        - in: query
+          name: network
+          required: true
+          description: The network the lock is on
+          schema:
+            type: number
+        - in: query
+          name: lockAddress
+          description: The address of the lock
+          schema:
+            type: string
+        - in: query
+          name: recipients
+          description: The list of recipients for the purchase
+          schema:
+            type: array
+            items:
+              type: string
+
+      responses:
+        200:
+          description: the list of data inputs to use for the transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: string
+  /purchase/capture:
+    post:
+      operationId: capturePurchase
+      security:
+        - User: []
+      description: Capture a purchase
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - 'network'
+                - 'lock'
+                - 'userAddress'
+                - 'paymentIntent'
+
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+
+                network: # The network the lock is on
+                  type: number
+
+                lock:
+                  type: string
+
+                userAddress:
+                  type: string
+
+                paymentIntent:
+                  type: string
+
+                data:
+                  type: array
+                  items:
+                    type: string
+
+                referrers:
+                  type: array
+                  items:
+                    type: string
+
+                purchaseType:
+                  type: string
+                  description: whether to extend or purchase membership for the recipient.
+                  enum:
+                    - 'extend'
+                    - 'purchase'
+      responses:
+        200:
+          description: Successfully captured purchase
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionHash:
+                    type: string
+
+  /v2/api/charges/{network}/locks/{lockAddress}:
+    get:
+      description: Get the price breakdown for recipients & total charges with fees for a specific lock
+      operationId: getChargesForLock
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - name: purchaseData[]
+          description: The purchase data passed to the purchase function
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: recipients[]
+          description: The recipients passed to the purchase function
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+
+      responses:
+        200:
+          description: Successfully got card pricing for universal cards
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - total
+                  - unlockServiceFee
+                  - gasCost
+                properties:
+                  total:
+                    type: number
+                  symbol:
+                    type: string
+                  creditCardProcessingFee:
+                    type: number
+                  unlockServiceFee:
+                    type: number
+                  gasCost:
+                    type: number
+                  prices:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - userAddress
+                        - amount
+                        - symbol
+                      properties:
+                        userAddress:
+                          type: string
+                        amount:
+                          type: string
+                        symbol:
+                          type: string
+
+  /claim/{network}/locks/{lockAddress}:
+    post:
+      description: Check if claim is possible for a given purchase
+      operationId: checkClaim
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+                data:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        200:
+          description: Send true if purchase can be claimed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  canClaim:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/email-subscriptions/unsubscribe/{network}/locks/{lockAddress}:
+    post:
+      operationId: unsubscribeEmail
+      security:
+        - User: []
+      description: Unsubscribe email from lock
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully unsubscribed email from lock
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/email-subscriptions/subscribe/{network}/locks/{lockAddress}:
+    post:
+      operationId: reSubscribeEmail
+      security:
+        - User: []
+      description: resubscribe emails from lock
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+
+      responses:
+        200:
+          description: Successfully subscribed email from lock
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/email/{network}/locks/{lockAddress}/custom/send:
+    post:
+      operationId: sendCustomEmail
+      security:
+        - User: []
+      description: Send custom email to recipients
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+                content:
+                  type: string
+      responses:
+        200:
+          description: Successfully sent custom email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sent:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/email/{slug}/invite:
+    post:
+      operationId: sendEventInvites
+      security:
+        - User: []
+      description: Send event invites to a list of recipients
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  maxItems: 10
+      responses:
+        200:
+          description: Successfully sent invites!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sent:
+                    type: boolean
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/events/save:
+    post:
+      operationId: saveEventData
+      security:
+        - User: []
+      description: Save event data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  additionalProperties: true
+                status:
+                  type: string
+                  enum: [pending, deployed]
+                transactionHash:
+                  type: string
+                checkoutConfig:
+                  $ref: '#/components/schemas/CheckoutConfig'
+      responses:
+        201:
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/events/update/{slug}:
+    post:
+      operationId: updateEventData
+      security:
+        - User: []
+      description: Update event data
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, deployed]
+                transactionHash:
+                  type: string
+                checkoutConfig:
+                  $ref: '#/components/schemas/CheckoutConfig'
+      responses:
+        200:
+          description: Successfully updated event data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slug:
+                    type: string
+                  status:
+                    type: string
+                  transactionHash:
+                    type: string
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+  /v2/events/{slug}:
+    get:
+      operationId: getEvent
+      parameters:
+        - $ref: '#/components/parameters/Slug'
+      description: Retrieves an event based on its slug. The event data including status and transactionHash can be accessed through the `data` property.
+      responses:
+        200:
+          description: Successfully retrieves the event along with its checkout config. Event details including status and transactionHash are nested under the `data` property.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  data:
+                    $ref: '#/components/schemas/Event'
+                  checkoutConfig:
+                    $ref: '#/components/schemas/CheckoutConfig'
+                  slug:
+                    type: string
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/rsvp/{network}/{lockAddress}:
+    post:
+      operationId: rsvp
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - name: captcha
+          in: header
+          required: true
+          description: Recaptcha value to pass.
+          schema:
+            type: string
+
+      description: User applies to attend an event.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient:
+                  type: string
+                email:
+                  type: string
+                data:
+                  type: object
+                  additionalProperties: true
+      responses:
+        200:
+          description: Successfully applied to event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/rsvp/{network}/{lockAddress}/approve/{userAddress}:
+    post:
+      deprecated: true
+      operationId: approveRsvp
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/UserAddress'
+
+      description: Approves a user to attend an event. (does not airdrop!)
+      responses:
+        200:
+          description: Successfully approves the user to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/rsvp/{network}/{lockAddress}/deny/{userAddress}:
+    post:
+      deprecated: true
+      operationId: denyRsvp
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/UserAddress'
+
+      description: Denies a user to attend an event. (does not airdrop!)
+      responses:
+        200:
+          description: Successfully denied the user to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/rsvp/{network}/{lockAddress}/approve:
+    post:
+      operationId: approveAttendeesRsvp
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+
+      description: Approves users to attend an event. (does not airdrop!)
+      responses:
+        200:
+          description: Successfully approves the users to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/rsvp/{network}/{lockAddress}/deny:
+    post:
+      operationId: denyAttendeesRsvp
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+
+      description: Denies users to attend an event.
+      responses:
+        200:
+          description: Successfully denied users to attend the event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rsvp'
+
+        404:
+          $ref: '#/components/responses/404.NotFound'
+
+        400:
+          $ref: '#/components/responses/400.Invalid'
+
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/pass/{network}/{lockAddress}/{keyId}/ios:
+    get:
+      operationId: generateAppleWalletPass
+      security:
+        - User: ['keyOwner']
+      description: Generate and return an Apple Wallet pass for a specified key associated with a lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Returns the streamable generated Apple Wallet pass file.
+          content:
+            application/vnd.apple.pkpass:
+              schema:
+                type: string
+                format: binary
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/pass/{network}/{lockAddress}/{keyId}/android:
+    get:
+      operationId: generateGoogleWalletPass
+      security:
+        - User: ['keyOwner']
+      description: Generate and return a Google Wallet pass for a specified key associated with a lock.
+      parameters:
+        - $ref: '#/components/parameters/Network'
+        - $ref: '#/components/parameters/LockAddress'
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        200:
+          description: Returns the URL to the created wallet pass object.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  passObjectUrl:
+                    type: string
+                    nullable: false
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection:
+    post:
+      operationId: createEventCollection
+      security:
+        - User: []
+      description: Create a new event collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCollectionBody'
+      responses:
+        201:
+          description: Successfully created event collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollection'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/{slug}:
+    get:
+      operationId: getEventCollection
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Get details of an event collection
+      responses:
+        200:
+          description: Successfully retrieved event collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollection'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+    put:
+      operationId: updateEventCollection
+      security:
+        - User: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Update an existing event collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCollectionBody'
+      responses:
+        200:
+          description: Successfully updated event collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollection'
+        403:
+          $ref: '#/components/responses/403.Forbidden'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/{slug}/events:
+    post:
+      operationId: addEventToCollection
+      security:
+        - User: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Add an event to a collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddEventToCollectionBody'
+      responses:
+        200:
+          description: Successfully added event to collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollectionAssociation'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+    get:
+      operationId: getEventsInCollection
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 10
+      description: Get events in a collection
+      responses:
+        200:
+          description: Successfully retrieved events in collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsInCollection'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+    delete:
+      operationId: removeEventFromCollection
+      security:
+        - User: []
+      description: Remove a single event from an event collection.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the event collection.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveEventBody'
+      responses:
+        200:
+          description: Successfully removed the event from the collection.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollection'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/{slug}/managers:
+    post:
+      operationId: addManagerToEventCollection
+      security:
+        - User: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Add a new manager address to an event collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddManagerBody'
+      responses:
+        200:
+          description: Successfully added manager address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollection'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        403:
+          $ref: '#/components/responses/403.NotAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+    delete:
+      operationId: removeManagerFromEventCollection
+      security:
+        - User: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Remove a manager address from an event collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveManagerBody'
+      responses:
+        200:
+          description: Successfully removed manager address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollection'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        403:
+          $ref: '#/components/responses/403.NotAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/{slug}/unapproved-events:
+    get:
+      operationId: getUnapprovedEventsForCollection
+      security:
+        - User: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Get unapproved events for a collection
+      responses:
+        200:
+          description: Successfully retrieved unapproved events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        401:
+          $ref: '#/components/responses/401.NotAuthenticated'
+        403:
+          $ref: '#/components/responses/403.NotAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/{slug}/events/approve:
+    post:
+      operationId: approveEvent
+      security:
+        - User: []
+      description: Approve a single event within an event collection.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the event collection.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveEventBody'
+      responses:
+        200:
+          description: Successfully approved the event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollectionAssociation'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/{slug}/events/bulk-approve:
+    post:
+      operationId: bulkApproveEvents
+      security:
+        - User: []
+      description: Bulk approve multiple events within an event collection.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the event collection.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkApproveEventsBody'
+      responses:
+        200:
+          description: Successfully approved the selected events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventCollectionAssociation'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/{slug}/events/bulk-remove:
+    delete:
+      operationId: bulkRemoveEvents
+      security:
+        - User: []
+      description: Bulk remove multiple events from an event collection.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Slug of the event collection.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkRemoveEventsBody'
+      responses:
+        200:
+          description: Successfully removed the selected events from the collection.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventCollection'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        403:
+          $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/event-collection/by-manager/{managerAddress}:
+    get:
+      operationId: getEventCollectionsByManager
+      parameters:
+        - name: managerAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Get all event collections managed by a specific address
+      responses:
+        200:
+          description: Successfully retrieved event collections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventCollection'
+        404:
+          $ref: '#/components/responses/404.NotFound'
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/privy/check:
+    post:
+      operationId: checkPrivyUser
+      description: Check if a user exists in Privy by email or wallet address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivyUserCheckBody'
+      responses:
+        200:
+          description: Successfully checked user existence in Privy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivyUserResponse'
+        400:
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    example: 'Either email or wallet address must be provided'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: string
+                    example: 'Failed to check Privy user'
+
+  /v2/merkle-tree:
+    post:
+      operationId: saveMerkleTree
+      description: Saves a merkle tree from either a list of addresses or a list of [address, amount] tuples.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              description: Array must contain either all strings (addresses) or all [address, amount] tuples, no mixing allowed
+              items:
+                type: object
+                oneOf:
+                  - type: string
+                    description: Recipient address (will be assigned amount "1")
+                  - type: array
+                    description: Address and amount tuple
+                    minItems: 2
+                    maxItems: 2
+                    items:
+                      oneOf:
+                        - type: string
+                          description: Recipient address
+                        - type: object
+                          properties:
+                            amount:
+                              oneOf:
+                                - type: string
+                                  description: Amount as string
+                                - type: number
+                                  description: Amount as number
+      responses:
+        200:
+          description: Successfully saved the Merkle Tree
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - root
+                properties:
+                  root:
+                    type: string
+                    description: The merkle tree root hash
+        400:
+          description: Invalid request (empty array, mixed types, or invalid addresses)
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                properties:
+                  error:
+                    type: object
+                    required:
+                      - issues
+                    properties:
+                      issues:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                            message:
+                              type: string
+                            path:
+                              type: array
+                              items:
+                                type: string
+        500:
+          $ref: '#/components/responses/500.InternalError'
+
+  /v2/events/external/save:
+    post:
+      operationId: saveExternalEventData
+      security:
+        - User: []
+      description: Save external event data that is not associated with an Unlock lock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - url
+                - image
+                - ticket
+              properties:
+                title:
+                  type: string
+                  description: The title of the external event
+                description:
+                  type: string
+                  description: Description of the external event
+                url:
+                  type: string
+                  description: URL to the external event's website
+                image:
+                  type: string
+                  description: URL to an image representing the event
+                ticket:
+                  type: object
+                  required:
+                    - event_start_date
+                    - event_start_time
+                    - event_end_date
+                    - event_end_time
+                    - event_timezone
+                    - event_is_in_person
+                    - event_address
+                    - event_location
+                  properties:
+                    event_start_date:
+                      type: string
+                      description: Start date in YYYY-MM-DD format
+                    event_start_time:
+                      type: string
+                      description: Start time in HH:MM format
+                    event_end_date:
+                      type: string
+                      description: End date in YYYY-MM-DD format
+                    event_end_time:
+                      type: string
+                      description: End time in HH:MM format
+                    event_timezone:
+                      type: string
+                      description: Timezone for the event
+                    event_is_in_person:
+                      type: boolean
+                      description: Whether the event is in-person or virtual
+                    event_address:
+                      type: string
+                      description: Address for the event (physical address or URL for virtual events)
+                    event_location:
+                      type: string
+                      description: Human-readable location information
+      responses:
+        201:
+          description: External event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        400:
+          $ref: '#/components/responses/400.Invalid'
+        500:
+          $ref: '#/components/responses/500.InternalError'

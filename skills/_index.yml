@@ -1,0 +1,15 @@
+generated: '2026-07-21'
+method: generated
+skills:
+  - file: unlock-protocol-authenticate-with-siwe.md
+    name: Authenticate with Sign-In with Ethereum (Locksmith)
+    api: openapi/unlock-protocol-locksmith-openapi.yml
+    operations: [nonce, login, user, logout, revoke]
+  - file: unlock-protocol-issue-and-verify-tickets.md
+    name: Issue and verify event tickets
+    api: openapi/unlock-protocol-locksmith-openapi.yml
+    operations: [getEventTicket, emailTicket, ticketQRCode, ticketVerificationUrl, checkEventTicket, eventVerifiers, addEventVerifier, generateAppleWalletPass, generateGoogleWalletPass]
+  - file: unlock-protocol-manage-lock-metadata.md
+    name: Manage lock, key, and user metadata
+    api: openapi/unlock-protocol-locksmith-openapi.yml
+    operations: [lockMetadata, updateLockMetadata, keyMetadata, updateKeyMetadata, getUserMetadata, updateUserMetadata, updateUsersMetadata, keysByPage, exportKeys, getExportedKeys]

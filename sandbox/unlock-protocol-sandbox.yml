@@ -1,0 +1,23 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unlock-protocol.com/tools/subgraph/ + openapi/unlock-protocol-locksmith-openapi.yml + https://docs.unlock-protocol.com/tutorials/smart-contracts/deploying-locally
+environments:
+  - name: staging-locksmith
+    kind: staging-api
+    url: https://staging-locksmith.unlock-protocol.com
+    evidence: Declared as "Staging Server" in the Locksmith OpenAPI servers[].
+  - name: test-networks
+    kind: testnets
+    networks: [Sepolia, Base Sepolia]
+    evidence: Docs list Sepolia and Base Sepolia as Test Networks with their own subgraphs — https://docs.unlock-protocol.com/tools/subgraph/
+  - name: dev-subgraph
+    kind: development-endpoint
+    url: https://subgraph.unlock-protocol.com/<chainId>
+    evidence: 'Docs: Unlock Labs hosts a subgraph service "for development purposes only"; production should use The Graph decentralized network.'
+  - name: local
+    kind: local-node
+    tooling: '@unlock-protocol/hardhat-plugin'
+    evidence: Hardhat plugin + "deploying locally" tutorial support running the protocol on a local chain — https://docs.unlock-protocol.com/tutorials/smart-contracts/deploying-locally
+notes:
+  - Test-vs-live separation is by network (testnet vs mainnet deployments) and by Locksmith host (staging vs production); there are no test API key prefixes.
+  - No published magic test values (test cards etc.); fiat payments go through Stripe Connect, whose own test mode applies to lock managers connecting Stripe.

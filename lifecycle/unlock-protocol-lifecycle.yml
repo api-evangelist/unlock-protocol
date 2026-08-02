@@ -1,0 +1,31 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.unlock-protocol.com/ + openapi/unlock-protocol-locksmith-openapi.yml
+versioning:
+  api:
+    scheme: uri-path
+    current: v2
+    evidence: Locksmith operations live under /v2/ (older /users/... endpoints from v1 remain alongside); OpenAPI info.version is '2'.
+  contracts:
+    scheme: versioned-interfaces
+    current: PublicLock v15 era (docs reference IPublicLockV9 through IPublicLockV14 archives plus current PublicLock)
+    docs: https://docs.unlock-protocol.com/core-protocol/smart-contracts-api/PublicLock
+    note: Smart contracts are upgradable and versioned independently of the Locksmith API; archived interface docs are kept per version.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: 'No formal deprecation policy or RFC 8594 Sunset header documented; deprecations are flagged in the OpenAPI ("deprecated: true") with pointers to replacement operations.'
+sla: null
+status_page: null
+status_page_note: status.unlock-protocol.com does not resolve (probed 2026-07-21); no status page found.
+roadmap: https://docs.unlock-protocol.com/governance/roadmap
+stewardship:
+  note: Unlock Labs completed its mission in 2025 and transferred responsibilities to the Unlock Protocol Foundation and the Unlock DAO; tools are maintained by the Unlock Ecosystem.
+  source: https://docs.unlock-protocol.com/getting-started/what-is-unlock/
+deprecated_operations:
+  - openapi/unlock-protocol-locksmith-openapi.yml#verifiers
+  - openapi/unlock-protocol-locksmith-openapi.yml#createVerifier
+  - openapi/unlock-protocol-locksmith-openapi.yml#deleteVerifier
+  - openapi/unlock-protocol-locksmith-openapi.yml#verifier
+  - openapi/unlock-protocol-locksmith-openapi.yml#checkTicket
+  - openapi/unlock-protocol-locksmith-openapi.yml#keys
