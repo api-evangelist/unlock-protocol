@@ -1,0 +1,236 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Locks API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Locks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "keys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/:network/locks/:lockAddress/keys",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Query you want to search for."
+              },
+              {
+                "name": "filterKey",
+                "value": "",
+                "type": "query",
+                "description": "The key you want to search on."
+              },
+              {
+                "name": "expiration",
+                "value": "",
+                "type": "query",
+                "description": "Expiration time"
+              },
+              {
+                "name": "approval",
+                "value": "",
+                "type": "query",
+                "description": "Approval status (relevant for offchain approvals on events for example)"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number when paginating"
+              },
+              {
+                "name": "max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to get by page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List of lock keys by network with additional metadata if the caller is the lockManager (deprecated, use keys-by-page)"
+        },
+        {
+          "info": {
+            "name": "keysByPage",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/:network/locks/:lockAddress/keys-by-page",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Query you want to search for."
+              },
+              {
+                "name": "filterKey",
+                "value": "",
+                "type": "query",
+                "description": "The key you want to search on."
+              },
+              {
+                "name": "expiration",
+                "value": "",
+                "type": "query",
+                "description": "Expiration time"
+              },
+              {
+                "name": "approval",
+                "value": "",
+                "type": "query",
+                "description": "Approval status (relevant for offchain approvals on events for example)"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number when paginating"
+              },
+              {
+                "name": "max",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to get by page"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List of lock keys by network with additional metadata if the caller is the lockManager"
+        },
+        {
+          "info": {
+            "name": "exportKeys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/:network/locks/:lockAddress/export-keys",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Query you want to search for."
+              },
+              {
+                "name": "filterKey",
+                "value": "",
+                "type": "query",
+                "description": "The key you want to search on."
+              },
+              {
+                "name": "expiration",
+                "value": "",
+                "type": "query",
+                "description": "Expiration time"
+              },
+              {
+                "name": "approval",
+                "value": "",
+                "type": "query",
+                "description": "Approval status (relevant for offchain approvals on events for example)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Starts Job process to get all the keys for the given lock"
+        },
+        {
+          "info": {
+            "name": "getExportedKeys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/:network/locks/:lockAddress/export-keys/:jobId",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "jobId",
+                "value": "",
+                "type": "path",
+                "description": "Id of the exported job."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get job result by job id"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

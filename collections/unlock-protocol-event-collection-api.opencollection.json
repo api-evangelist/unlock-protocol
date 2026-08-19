@@ -1,0 +1,335 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Event Collection API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Event Collection",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "createEventCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new event collection"
+        },
+        {
+          "info": {
+            "name": "getEventCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get details of an event collection"
+        },
+        {
+          "info": {
+            "name": "updateEventCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update an existing event collection"
+        },
+        {
+          "info": {
+            "name": "getEventsInCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/events",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get events in a collection"
+        },
+        {
+          "info": {
+            "name": "addEventToCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/events",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Add an event to a collection"
+        },
+        {
+          "info": {
+            "name": "removeEventFromCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/events",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug of the event collection."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Remove a single event from an event collection."
+        },
+        {
+          "info": {
+            "name": "addManagerToEventCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/managers",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Add a new manager address to an event collection"
+        },
+        {
+          "info": {
+            "name": "removeManagerFromEventCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/managers",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Remove a manager address from an event collection"
+        },
+        {
+          "info": {
+            "name": "getUnapprovedEventsForCollection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/unapproved-events",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get unapproved events for a collection"
+        },
+        {
+          "info": {
+            "name": "approveEvent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/events/approve",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug of the event collection."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Approve a single event within an event collection."
+        },
+        {
+          "info": {
+            "name": "bulkApproveEvents",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/events/bulk-approve",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug of the event collection."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Bulk approve multiple events within an event collection."
+        },
+        {
+          "info": {
+            "name": "bulkRemoveEvents",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/:slug/events/bulk-remove",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug of the event collection."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Bulk remove multiple events from an event collection."
+        },
+        {
+          "info": {
+            "name": "getEventCollectionsByManager",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/event-collection/by-manager/:managerAddress",
+            "params": [
+              {
+                "name": "managerAddress",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get all event collections managed by a specific address"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,72 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Lock API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Lock",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "disconnectStripe",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://locksmith.unlock-protocol.com/:network/lock/:lockAddress/stripe",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Disconnect stripe account."
+        },
+        {
+          "info": {
+            "name": "getLockStripeConnectionDetails",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/lock/:lockAddress/stripe-connected",
+            "params": [
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "chain",
+                "value": "",
+                "type": "query",
+                "description": "Lock network"
+              }
+            ]
+          },
+          "docs": "Returns Stripe connection details"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

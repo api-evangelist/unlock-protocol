@@ -1,0 +1,76 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Email Subscriptions API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Email Subscriptions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "unsubscribeEmail",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/email-subscriptions/unsubscribe/:network/locks/:lockAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Unsubscribe email from lock"
+        },
+        {
+          "info": {
+            "name": "reSubscribeEmail",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/email-subscriptions/subscribe/:network/locks/:lockAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "resubscribe emails from lock"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

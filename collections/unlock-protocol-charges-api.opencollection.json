@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Charges API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Charges",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "getChargesForLock",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/charges/:network/locks/:lockAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "purchaseData[]",
+                "value": "",
+                "type": "query",
+                "description": "The purchase data passed to the purchase function"
+              },
+              {
+                "name": "recipients[]",
+                "value": "",
+                "type": "query",
+                "description": "The recipients passed to the purchase function"
+              }
+            ]
+          },
+          "docs": "Get the price breakdown for recipients & total charges with fees for a specific lock"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

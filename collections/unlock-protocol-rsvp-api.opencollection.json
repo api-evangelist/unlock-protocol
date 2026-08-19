@@ -1,0 +1,173 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Rsvp API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Rsvp",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "rsvp",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/rsvp/:network/:lockAddress",
+            "headers": [
+              {
+                "name": "captcha",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "User applies to attend an event."
+        },
+        {
+          "info": {
+            "name": "approveRsvp",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/rsvp/:network/:lockAddress/approve/:userAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "userAddress",
+                "value": "",
+                "type": "path",
+                "description": "User address."
+              }
+            ]
+          },
+          "docs": "Approves a user to attend an event. (does not airdrop!)"
+        },
+        {
+          "info": {
+            "name": "denyRsvp",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/rsvp/:network/:lockAddress/deny/:userAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "userAddress",
+                "value": "",
+                "type": "path",
+                "description": "User address."
+              }
+            ]
+          },
+          "docs": "Denies a user to attend an event. (does not airdrop!)"
+        },
+        {
+          "info": {
+            "name": "approveAttendeesRsvp",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/rsvp/:network/:lockAddress/approve",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Approves users to attend an event. (does not airdrop!)"
+        },
+        {
+          "info": {
+            "name": "denyAttendeesRsvp",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/rsvp/:network/:lockAddress/deny",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Denies users to attend an event."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

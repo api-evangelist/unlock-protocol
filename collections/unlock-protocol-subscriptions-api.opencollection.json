@@ -1,0 +1,88 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Subscriptions API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Subscriptions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "getSubscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/subscriptions/:network/locks/:lockAddress/keys/:keyId",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "keyId",
+                "value": "",
+                "type": "path",
+                "description": "Key Id."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get an active subscription associated with the key. It can be fiat or crypto."
+        },
+        {
+          "info": {
+            "name": "cancelSubscription",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://locksmith.unlock-protocol.com/v2/subscriptions/:network/locks/:lockAddress/keys/:keyId",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "keyId",
+                "value": "",
+                "type": "path",
+                "description": "Key Id."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Cancel a fiat subscription."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

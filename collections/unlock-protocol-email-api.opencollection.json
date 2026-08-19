@@ -1,0 +1,148 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Email API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Email",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "getCustomEmailContent",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/email/:network/locks/:lockAddress/custom/:template",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "template",
+                "value": "",
+                "type": "path",
+                "description": "Template id for email"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get custom email content for a specific template and lock details"
+        },
+        {
+          "info": {
+            "name": "saveCustomEmailContent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/email/:network/locks/:lockAddress/custom/:template",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "template",
+                "value": "",
+                "type": "path",
+                "description": "Template id for email"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Save custom email content for a specif lock."
+        },
+        {
+          "info": {
+            "name": "sendCustomEmail",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/email/:network/locks/:lockAddress/custom/send",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Send custom email to recipients"
+        },
+        {
+          "info": {
+            "name": "sendEventInvites",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/email/:slug/invite",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Send event invites to a list of recipients"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

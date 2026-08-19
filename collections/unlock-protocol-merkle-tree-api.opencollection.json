@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Merkle Tree API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Merkle Tree",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "saveMerkleTree",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/merkle-tree",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Saves a merkle tree from either a list of addresses or a list of [address, amount] tuples."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

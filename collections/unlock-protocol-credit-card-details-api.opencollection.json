@@ -1,0 +1,43 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Credit Card Details API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Credit Card Details",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "isCardPaymentEnabledForLock",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/credit-card-details/:network/locks/:lockAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ]
+          },
+          "docs": "Returns if credit card payment are enable for a lock"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

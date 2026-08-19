@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Privy API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Privy",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "checkPrivyUser",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/privy/check",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Check if a user exists in Privy by email or wallet address"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

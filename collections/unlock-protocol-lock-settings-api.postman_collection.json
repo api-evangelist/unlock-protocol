@@ -1,0 +1,625 @@
+{
+  "item": [
+    {
+      "id": "6bd5f808-874f-48ba-9ed4-6ef08d07d544",
+      "name": "Lock Settings",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "2af46de7-f2a5-4da9-830e-5dc1df946198",
+          "name": "get Lock Settings By Slug",
+          "request": {
+            "name": "get Lock Settings By Slug",
+            "description": {
+              "content": "Get lock setting by slug",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "lock-settings",
+                "slug",
+                ":slug"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "slug",
+                  "description": "(Required) Slug"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ad1d7be2-f32e-450b-85ea-f4a769f9c65f",
+              "name": "Successfully get settings for lock",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "lock-settings",
+                    "slug",
+                    ":slug"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "slug",
+                      "description": "(Required) Slug"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"lockAddress\": \"string\",\n  \"network\": 8157.558451638452,\n  \"sendEmail\": true,\n  \"slug\": \"string\",\n  \"replyTo\": \"string\",\n  \"creditCardPrice\": 5895.836380916505,\n  \"emailSender\": \"string\",\n  \"checkoutConfigId\": \"string\",\n  \"hookGuildId\": \"string\",\n  \"unlockFeeChargedToUser\": true,\n  \"creditCardCurrency\": \"usd\",\n  \"crossmintClientId\": \"string\",\n  \"promoCodes\": [\n    \"string\",\n    \"string\"\n  ],\n  \"passwords\": [\n    \"string\",\n    \"string\"\n  ],\n  \"requiredGitcoinPassportScore\": 1975.2106341881404,\n  \"allowList\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8a0b914f-27df-470c-a205-6b7ccb19cf27",
+          "name": "get Lock Settings",
+          "request": {
+            "name": "get Lock Settings",
+            "description": {
+              "content": "Get saved lock settings",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "lock-settings",
+                ":network",
+                "locks",
+                ":lockAddress"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "network",
+                  "description": "(Required) Network id."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "lockAddress",
+                  "description": "(Required) Lock address."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "91820a3b-ec8b-4e7e-8e5e-9f79ccb71f43",
+              "name": "Successfully get settings for lock",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "lock-settings",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"lockAddress\": \"string\",\n  \"network\": 4548.629074353612,\n  \"sendEmail\": false,\n  \"slug\": \"string\",\n  \"replyTo\": \"string\",\n  \"creditCardPrice\": 9691.552952175318,\n  \"emailSender\": \"string\",\n  \"checkoutConfigId\": \"string\",\n  \"hookGuildId\": \"string\",\n  \"unlockFeeChargedToUser\": true,\n  \"creditCardCurrency\": \"usd\",\n  \"crossmintClientId\": \"string\",\n  \"promoCodes\": [\n    \"string\",\n    \"string\"\n  ],\n  \"passwords\": [\n    \"string\",\n    \"string\"\n  ],\n  \"requiredGitcoinPassportScore\": 6126.055189782313,\n  \"allowList\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4f228a37-e696-4402-a1a8-b923a3366dba",
+              "name": "Setting not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "lock-settings",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f0f2edef-486d-4395-a7b7-d5ed1f684686",
+              "name": "Invalid request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "lock-settings",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "35442f94-7001-4cbd-aa58-ae47594b270f",
+          "name": "save Lock Setting",
+          "request": {
+            "name": "save Lock Setting",
+            "description": {
+              "content": "Save lock settings",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "lock-settings",
+                ":network",
+                "locks",
+                ":lockAddress"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "network",
+                  "description": "(Required) Network id."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "lockAddress",
+                  "description": "(Required) Lock address."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lockAddress\": \"<string>\",\n  \"network\": \"<number>\",\n  \"sendEmail\": \"<boolean>\",\n  \"slug\": \"<string>\",\n  \"replyTo\": \"<string>\",\n  \"creditCardPrice\": \"<number>\",\n  \"emailSender\": \"<string>\",\n  \"checkoutConfigId\": \"<string>\",\n  \"hookGuildId\": \"<string>\",\n  \"unlockFeeChargedToUser\": \"<boolean>\",\n  \"creditCardCurrency\": \"usd\",\n  \"crossmintClientId\": \"<string>\",\n  \"promoCodes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"passwords\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"requiredGitcoinPassportScore\": \"<number>\",\n  \"allowList\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "9aa959b0-7681-4925-87f9-07839339f3fd",
+              "name": "Successfully saved settings for lock",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "lock-settings",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lockAddress\": \"<string>\",\n  \"network\": \"<number>\",\n  \"sendEmail\": \"<boolean>\",\n  \"slug\": \"<string>\",\n  \"replyTo\": \"<string>\",\n  \"creditCardPrice\": \"<number>\",\n  \"emailSender\": \"<string>\",\n  \"checkoutConfigId\": \"<string>\",\n  \"hookGuildId\": \"<string>\",\n  \"unlockFeeChargedToUser\": \"<boolean>\",\n  \"creditCardCurrency\": \"usd\",\n  \"crossmintClientId\": \"<string>\",\n  \"promoCodes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"passwords\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"requiredGitcoinPassportScore\": \"<number>\",\n  \"allowList\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"sendEmail\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "42f4b1f5-0dce-4226-aa27-6c73624a5110",
+              "name": "User is not authenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "lock-settings",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lockAddress\": \"<string>\",\n  \"network\": \"<number>\",\n  \"sendEmail\": \"<boolean>\",\n  \"slug\": \"<string>\",\n  \"replyTo\": \"<string>\",\n  \"creditCardPrice\": \"<number>\",\n  \"emailSender\": \"<string>\",\n  \"checkoutConfigId\": \"<string>\",\n  \"hookGuildId\": \"<string>\",\n  \"unlockFeeChargedToUser\": \"<boolean>\",\n  \"creditCardCurrency\": \"usd\",\n  \"crossmintClientId\": \"<string>\",\n  \"promoCodes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"passwords\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"requiredGitcoinPassportScore\": \"<number>\",\n  \"allowList\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "9bf8912f-f52c-4393-9d22-fb636cacbcc5",
+              "name": "Invalid request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "lock-settings",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lockAddress\": \"<string>\",\n  \"network\": \"<number>\",\n  \"sendEmail\": \"<boolean>\",\n  \"slug\": \"<string>\",\n  \"replyTo\": \"<string>\",\n  \"creditCardPrice\": \"<number>\",\n  \"emailSender\": \"<string>\",\n  \"checkoutConfigId\": \"<string>\",\n  \"hookGuildId\": \"<string>\",\n  \"unlockFeeChargedToUser\": \"<boolean>\",\n  \"creditCardCurrency\": \"usd\",\n  \"crossmintClientId\": \"<string>\",\n  \"promoCodes\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"passwords\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"requiredGitcoinPassportScore\": \"<number>\",\n  \"allowList\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://locksmith.unlock-protocol.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "9861a4b2-db39-4af2-96ad-8947262c4fc0",
+    "name": "Unlock Locksmith Applications Lock Settings API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.",
+      "type": "text/plain"
+    }
+  }
+}

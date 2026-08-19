@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Captcha API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Captcha",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "getDataForRecipientsAndCaptcha",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/api/captcha",
+            "params": [
+              {
+                "name": "recipients[]",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "captchaValue",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "network",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieves data for recipients and captcha."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

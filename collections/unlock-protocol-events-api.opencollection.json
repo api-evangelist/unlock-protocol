@@ -1,0 +1,257 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Events API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Events",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "eventVerifiers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/:slug/verifiers",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List of verifiers for an event."
+        },
+        {
+          "info": {
+            "name": "addEventVerifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/:slug/verifiers/:verifierAddress",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug"
+              },
+              {
+                "name": "verifierAddress",
+                "value": "",
+                "type": "path",
+                "description": "User address to use as verifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Adds a verifier for an event."
+        },
+        {
+          "info": {
+            "name": "deleteEventVerifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/:slug/verifiers/:verifierAddress",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug"
+              },
+              {
+                "name": "verifierAddress",
+                "value": "",
+                "type": "path",
+                "description": "User address to use as verifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Removes a verifier for an event."
+        },
+        {
+          "info": {
+            "name": "approveRefunds",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/:slug/approve-refunds",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Approves refunds for an event."
+        },
+        {
+          "info": {
+            "name": "approvedRefunds",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/approved-refunds/:slug",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug"
+              }
+            ]
+          },
+          "docs": "Returns the merkle proof of an approved refund."
+        },
+        {
+          "info": {
+            "name": "getEventDetails",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/:network/:lockAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ]
+          },
+          "docs": "Get the event details from lock"
+        },
+        {
+          "info": {
+            "name": "saveEventData",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/save",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Save event data"
+        },
+        {
+          "info": {
+            "name": "updateEventData",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/update/:slug",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update event data"
+        },
+        {
+          "info": {
+            "name": "getEvent",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/:slug",
+            "params": [
+              {
+                "name": "slug",
+                "value": "",
+                "type": "path",
+                "description": "Slug"
+              }
+            ]
+          },
+          "docs": "Retrieves an event based on its slug. The event data including status and transactionHash can be accessed through the `data` property."
+        },
+        {
+          "info": {
+            "name": "saveExternalEventData",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/events/external/save",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Save external event data that is not associated with an Unlock lock"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

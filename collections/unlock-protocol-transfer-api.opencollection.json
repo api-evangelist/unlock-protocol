@@ -1,0 +1,72 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Transfer API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Transfer",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "createTransferCode",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/transfer/:network/locks/:lockAddress/keys/:keyId",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "keyId",
+                "value": "",
+                "type": "path",
+                "description": "Key Id."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a transfer code to transfer an airdropped key to an email address."
+        },
+        {
+          "info": {
+            "name": "transferDone",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/transfer/done",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Finalize the transfer of a key to a recipient. This is to copy over any locksmith related data to the recipient's account."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

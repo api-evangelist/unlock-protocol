@@ -1,0 +1,211 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Users API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Users",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "getWaasToken",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/users/:emailAddress/:selectedProvider/waas",
+            "headers": [
+              {
+                "name": "captcha",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "emailAddress",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "selectedProvider",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Gets Coinbase WAAS token for user by email and selected provider."
+        },
+        {
+          "info": {
+            "name": "getUserAccountType",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/users/:emailAddress/existNextAuth",
+            "params": [
+              {
+                "name": "emailAddress",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Gets User account type by email."
+        },
+        {
+          "info": {
+            "name": "sendVerificationCode",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/users/:emailAddress/send-verification-code",
+            "headers": [
+              {
+                "name": "captcha",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "emailAddress",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Sends a verification code to the user's email if the current code is expired or does not exist."
+        },
+        {
+          "info": {
+            "name": "verifyEmailCode",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/users/:emailAddress/verify-email-code",
+            "params": [
+              {
+                "name": "emailAddress",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Verifies the email code sent to the users email address."
+        },
+        {
+          "info": {
+            "name": "updateUserEncryptedPrivateKey",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://locksmith.unlock-protocol.com/users/:emailAddress/passwordEncryptedPrivateKey",
+            "params": [
+              {
+                "name": "emailAddress",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Updates a user's private key, using their email address as key. In the case of failure a rejected promise is returned to the caller."
+        },
+        {
+          "info": {
+            "name": "getUserPrivateKey",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/users/:emailAddress/privatekey",
+            "params": [
+              {
+                "name": "emailAddress",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Given a user's email address, retrieves their private key. In the case of failure a rejected promise is returned to the caller."
+        },
+        {
+          "info": {
+            "name": "getUserRecoveryPhrase",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/users/:emailAddress/recoveryphrase",
+            "params": [
+              {
+                "name": "emailAddress",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Given a user's email address, retrieves their recovery phrase. In the case of failure a rejected promise is returned to the caller."
+        },
+        {
+          "info": {
+            "name": "ejectUser",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/users/:publicKey/eject",
+            "params": [
+              {
+                "name": "publicKey",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Ejects a user given their public key. In the case of failure, a rejected promise is returned to the caller."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

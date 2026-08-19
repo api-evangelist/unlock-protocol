@@ -2,7 +2,8 @@ generated: '2026-07-21'
 method: derived
 status: candidate
 source: openapi/unlock-protocol-locksmith-openapi.yml
-note: No official Unlock Protocol MCP server was found on npm or in the docs (checked 2026-07-21). This is a candidate tool list derived from the Locksmith OpenAPI operations.
+note: No official Unlock Protocol MCP server was found on npm or in the docs (checked 2026-07-21). This
+  is a candidate tool list derived from the Locksmith OpenAPI operations.
 server:
   name: unlock-protocol-locksmith
   transport: http
@@ -114,28 +115,34 @@ tools:
   description: Gets User account type by email.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUserAccountType
 - name: sendVerificationCode
-  description: Sends a verification code to the user's email if the current code is expired or does not exist.
+  description: Sends a verification code to the user's email if the current code is expired or does not
+    exist.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#sendVerificationCode
 - name: verifyEmailCode
   description: Verifies the email code sent to the users email address.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#verifyEmailCode
 - name: updateUserEncryptedPrivateKey
-  description: Updates a user's private key, using their email address as key. In the case of failure a rejected promise is returned to the caller.
+  description: Updates a user's private key, using their email address as key. In the case of failure
+    a rejected promise is returned to the caller.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateUserEncryptedPrivateKey
 - name: getUserPrivateKey
-  description: Given a user's email address, retrieves their private key. In the case of failure a rejected promise is returned to the caller.
+  description: Given a user's email address, retrieves their private key. In the case of failure a rejected
+    promise is returned to the caller.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUserPrivateKey
 - name: getUserRecoveryPhrase
-  description: Given a user's email address, retrieves their recovery phrase. In the case of failure a rejected promise is returned to the caller.
+  description: Given a user's email address, retrieves their recovery phrase. In the case of failure a
+    rejected promise is returned to the caller.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getUserRecoveryPhrase
 - name: ejectUser
-  description: Ejects a user given their public key. In the case of failure, a rejected promise is returned to the caller.
+  description: Ejects a user given their public key. In the case of failure, a rejected promise is returned
+    to the caller.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#ejectUser
 - name: getDataForRecipientsAndCaptcha
   description: Retrieves data for recipients and captcha.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getDataForRecipientsAndCaptcha
 - name: keys
-  description: List of lock keys by network with additional metadata if the caller is the lockManager (deprecated, use keys-by-page)
+  description: List of lock keys by network with additional metadata if the caller is the lockManager
+    (deprecated, use keys-by-page)
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#keys
 - name: keysByPage
   description: List of lock keys by network with additional metadata if the caller is the lockManager
@@ -192,7 +199,8 @@ tools:
   description: Create a transfer code to transfer an airdropped key to an email address.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#createTransferCode
 - name: transferDone
-  description: Finalize the transfer of a key to a recipient. This is to copy over any locksmith related data to the recipient's account.
+  description: Finalize the transfer of a key to a recipient. This is to copy over any locksmith related
+    data to the recipient's account.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#transferDone
 - name: getReceiptsStatus
   description: Retrieve the status of receipt generation for a lock.
@@ -267,7 +275,8 @@ tools:
   description: Get the data for recipients and guild. This is to be used in conjunction with the Guild
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getDataForRecipientsAndGuild
 - name: getDataForRecipientsAndGitcoinPassport
-  description: Get the data for recipients and gitcoin passport. This is to be used in conjunction with the Gitcoin passport scorer.
+  description: Get the data for recipients and gitcoin passport. This is to be used in conjunction with
+    the Gitcoin passport scorer.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getDataForRecipientsAndGitcoinPassport
 - name: capturePurchase
   description: Capture a purchase
@@ -297,7 +306,8 @@ tools:
   description: Update event data
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#updateEventData
 - name: getEvent
-  description: Retrieves an event based on its slug. The event data including status and transactionHash can be accessed through the `data` property.
+  description: Retrieves an event based on its slug. The event data including status and transactionHash
+    can be accessed through the `data` property.
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#getEvent
 - name: rsvp
   description: User applies to attend an event.
@@ -368,3 +378,9 @@ tools:
 - name: saveExternalEventData
   description: Save external event data that is not associated with an Unlock lock
   source_operation: openapi/unlock-protocol-locksmith-openapi.yml#saveExternalEventData
+deployment:
+  mode: none
+  verified: derived
+  tools: 120
+  checked: '2026-08-12'
+  source: catalog MCP census

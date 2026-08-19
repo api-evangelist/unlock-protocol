@@ -1,0 +1,80 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Hooks API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Hooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "getDataForRecipientsAndGuild",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/hooks/guild",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "query",
+                "description": "The network the lock is on"
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "query",
+                "description": "The address of the lock"
+              },
+              {
+                "name": "recipients",
+                "value": "",
+                "type": "query",
+                "description": "The list of recipients for the purchase"
+              }
+            ]
+          },
+          "docs": "Get the data for recipients and guild. This is to be used in conjunction with the Guild"
+        },
+        {
+          "info": {
+            "name": "getDataForRecipientsAndGitcoinPassport",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/hooks/gitcoin",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "query",
+                "description": "The network the lock is on"
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "query",
+                "description": "The address of the lock"
+              },
+              {
+                "name": "recipients",
+                "value": "",
+                "type": "query",
+                "description": "The list of recipients for the purchase"
+              }
+            ]
+          },
+          "docs": "Get the data for recipients and gitcoin passport. This is to be used in conjunction with the Gitcoin passport scorer."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

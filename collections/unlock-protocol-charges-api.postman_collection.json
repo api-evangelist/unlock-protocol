@@ -1,0 +1,184 @@
+{
+  "item": [
+    {
+      "id": "ed3fd1aa-b3e6-4788-85e1-844fe91698c9",
+      "name": "Charges",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "280ed73c-efdc-4d9c-9e9f-c32cd3389643",
+          "name": "get Charges For Lock",
+          "request": {
+            "name": "get Charges For Lock",
+            "description": {
+              "content": "Get the price breakdown for recipients & total charges with fees for a specific lock",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "api",
+                "charges",
+                ":network",
+                "locks",
+                ":lockAddress"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "purchaseData[]",
+                  "value": "<string>",
+                  "description": "(Required) The purchase data passed to the purchase function"
+                },
+                {
+                  "disabled": false,
+                  "key": "purchaseData[]",
+                  "value": "<string>",
+                  "description": "(Required) The purchase data passed to the purchase function"
+                },
+                {
+                  "disabled": false,
+                  "key": "recipients[]",
+                  "value": "<string>",
+                  "description": "(Required) The recipients passed to the purchase function"
+                },
+                {
+                  "disabled": false,
+                  "key": "recipients[]",
+                  "value": "<string>",
+                  "description": "(Required) The recipients passed to the purchase function"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "network",
+                  "description": "(Required) Network id."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "lockAddress",
+                  "description": "(Required) Lock address."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6916ea42-683e-4261-824b-fc8c8cd6558f",
+              "name": "Successfully got card pricing for universal cards",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "api",
+                    "charges",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "purchaseData[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "purchaseData[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "recipients[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "recipients[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"total\": 9454.218447026558,\n  \"unlockServiceFee\": 5177.042321006337,\n  \"gasCost\": 7157.536054821201,\n  \"symbol\": \"string\",\n  \"creditCardProcessingFee\": 4811.740958639082,\n  \"prices\": [\n    {\n      \"userAddress\": \"string\",\n      \"amount\": \"string\",\n      \"symbol\": \"string\"\n    },\n    {\n      \"userAddress\": \"string\",\n      \"amount\": \"string\",\n      \"symbol\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://locksmith.unlock-protocol.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "58bcbb15-5d8b-4994-946c-af57092ed2b7",
+    "name": "Unlock Locksmith Applications Charges API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.",
+      "type": "text/plain"
+    }
+  }
+}

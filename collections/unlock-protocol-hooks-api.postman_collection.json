@@ -1,0 +1,264 @@
+{
+  "item": [
+    {
+      "id": "9e35fb6e-f2b9-45eb-b5b4-ec1279839dc3",
+      "name": "Hooks",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7c5109ac-42f8-478f-ad84-ec893ccf3f4d",
+          "name": "get Data For Recipients And Guild",
+          "request": {
+            "name": "get Data For Recipients And Guild",
+            "description": {
+              "content": "Get the data for recipients and guild. This is to be used in conjunction with the Guild",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "hooks",
+                "guild"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "network",
+                  "value": "<number>",
+                  "description": "(Required) The network the lock is on"
+                },
+                {
+                  "disabled": false,
+                  "key": "lockAddress",
+                  "value": "<string>",
+                  "description": "The address of the lock"
+                },
+                {
+                  "disabled": false,
+                  "key": "recipients",
+                  "value": "<string>",
+                  "description": "The list of recipients for the purchase"
+                },
+                {
+                  "disabled": false,
+                  "key": "recipients",
+                  "value": "<string>",
+                  "description": "The list of recipients for the purchase"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ad88f127-eeaf-40fe-abec-257b9d9239b2",
+              "name": "the list of data inputs to use for the transaction",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "hooks",
+                    "guild"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "network",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lockAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "recipients",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "recipients",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "246f49be-cf4b-4602-9f19-5b3c8feb93f4",
+          "name": "get Data For Recipients And Gitcoin Passport",
+          "request": {
+            "name": "get Data For Recipients And Gitcoin Passport",
+            "description": {
+              "content": "Get the data for recipients and gitcoin passport. This is to be used in conjunction with the Gitcoin passport scorer.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "hooks",
+                "gitcoin"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "network",
+                  "value": "<number>",
+                  "description": "(Required) The network the lock is on"
+                },
+                {
+                  "disabled": false,
+                  "key": "lockAddress",
+                  "value": "<string>",
+                  "description": "The address of the lock"
+                },
+                {
+                  "disabled": false,
+                  "key": "recipients",
+                  "value": "<string>",
+                  "description": "The list of recipients for the purchase"
+                },
+                {
+                  "disabled": false,
+                  "key": "recipients",
+                  "value": "<string>",
+                  "description": "The list of recipients for the purchase"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "84e0c627-ea20-43c5-b5d4-105faab08482",
+              "name": "the list of data inputs to use for the transaction",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "hooks",
+                    "gitcoin"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "network",
+                      "value": "<number>"
+                    },
+                    {
+                      "key": "lockAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "recipients",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "recipients",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": [\n    \"string\",\n    \"string\"\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://locksmith.unlock-protocol.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "fb991a7e-0239-4a66-b12c-9dafd0639a37",
+    "name": "Unlock Locksmith Applications Hooks API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Claim API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Claim",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "claim",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/v2/claim/:network/locks/:lockAddress",
+            "headers": [
+              {
+                "name": "captcha",
+                "value": ""
+              },
+              {
+                "name": "recipient",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Claim a membership key for a lock. If not authenticated, requires an email in the body."
+        },
+        {
+          "info": {
+            "name": "checkClaim",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://locksmith.unlock-protocol.com/claim/:network/locks/:lockAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Check if claim is possible for a given purchase"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

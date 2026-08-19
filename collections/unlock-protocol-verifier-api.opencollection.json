@@ -1,0 +1,156 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Unlock Locksmith Applications Verifier API",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Verifier",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "verifiers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/verifier/list/:network/:lockAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List of verifiers for the lock address. (deprecated in favor of eventVerifiers)"
+        },
+        {
+          "info": {
+            "name": "createVerifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/verifier/:network/:lockAddress/:verifierAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "verifierAddress",
+                "value": "",
+                "type": "path",
+                "description": "User address to use as verifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create verifier. (deprecated in favor of addEventVerifier)"
+        },
+        {
+          "info": {
+            "name": "deleteVerifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/verifier/:network/:lockAddress/:verifierAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "verifierAddress",
+                "value": "",
+                "type": "path",
+                "description": "User address to use as verifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Remove verifier. (deprecated in favor of deleteEventVerifier)"
+        },
+        {
+          "info": {
+            "name": "verifier",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://locksmith.unlock-protocol.com/v2/api/verifier/:network/lock/:lockAddress/address/:verifierAddress",
+            "params": [
+              {
+                "name": "network",
+                "value": "",
+                "type": "path",
+                "description": "Network id."
+              },
+              {
+                "name": "lockAddress",
+                "value": "",
+                "type": "path",
+                "description": "Lock address."
+              },
+              {
+                "name": "verifierAddress",
+                "value": "",
+                "type": "path",
+                "description": "User address to use as verifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Check if an address is a verifier of the lock. (deprecated in favor of eventVerifier)"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

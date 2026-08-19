@@ -1,0 +1,217 @@
+{
+  "item": [
+    {
+      "id": "7f02524b-b7bc-41ee-a8f6-c8b9aca8aa27",
+      "name": "Privy",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "90f456d7-aaa6-4ee9-b7c4-7ab125eb72d8",
+          "name": "check Privy User",
+          "request": {
+            "name": "check Privy User",
+            "description": {
+              "content": "Check if a user exists in Privy by email or wallet address",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "privy",
+                "check"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0d690a1f-faf8-45c3-b097-6d0b4ae88b18",
+              "name": "Successfully checked user existence in Privy",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "privy",
+                    "check"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"exists\": true,\n  \"user\": {\n    \"id\": \"string\",\n    \"createdAt\": \"2025-01-31T06:12:20.395Z\",\n    \"isGuest\": true,\n    \"customMetadata\": {},\n    \"email\": {\n      \"address\": \"w0S@MYSQrJRYIontqSNobTaHgbkU.elu\",\n      \"verifiedAt\": \"1956-03-27T20:50:33.966Z\",\n      \"firstVerifiedAt\": \"1976-01-17T16:49:25.186Z\",\n      \"latestVerifiedAt\": \"1963-07-20T09:25:02.090Z\"\n    },\n    \"wallet\": {\n      \"address\": \"string\",\n      \"chainType\": \"string\",\n      \"verifiedAt\": \"2012-07-20T00:19:14.879Z\",\n      \"firstVerifiedAt\": \"1949-01-28T18:20:34.740Z\",\n      \"latestVerifiedAt\": \"1987-02-06T15:21:54.195Z\"\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ea6b05b2-40bd-482b-8d39-9969443fd272",
+              "name": "Missing required fields",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "privy",
+                    "check"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Either email or wallet address must be provided\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b7ff97bc-b366-4812-9e9e-ed3dbda84aea",
+              "name": "Server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "privy",
+                    "check"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Failed to check Privy user\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://locksmith.unlock-protocol.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "4993eb97-ba8c-420b-a44d-a3c5311b0a21",
+    "name": "Unlock Locksmith Applications Privy API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.",
+      "type": "text/plain"
+    }
+  }
+}

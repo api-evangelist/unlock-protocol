@@ -1,0 +1,866 @@
+{
+  "item": [
+    {
+      "id": "98ded27c-95a0-49eb-aa3b-7bd7b28565ee",
+      "name": "Purchase",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "28144776-7837-4b60-8fed-040d55dc75a1",
+          "name": "balance",
+          "request": {
+            "name": "balance",
+            "description": {},
+            "url": {
+              "path": [
+                "purchase"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1b02e3be-4282-4f0f-82fe-185779ed49ed",
+              "name": "Balances for purchaser addresses on each network.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "purchase"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"key_0\": {\n    \"address\": \"string\",\n    \"name\": \"string\",\n    \"balance\": \"string\"\n  },\n  \"key_1\": {\n    \"address\": \"string\",\n    \"name\": \"string\",\n    \"balance\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7fa4d6cc-40a7-4be4-8f04-0d0f8dafeb16",
+              "name": "Unable to fullfil request due to internal server error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "purchase"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"There was an error in fullfiling the request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6ae06960-0097-48e4-b1ae-7203519a10af",
+          "name": "purchase",
+          "request": {
+            "name": "purchase",
+            "description": {
+              "content": "Create purchase intent for stripe.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "purchase",
+                "intent",
+                ":network",
+                "locks",
+                ":lockAddress"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "network",
+                  "description": "(Required) Network id."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "lockAddress",
+                  "description": "(Required) Lock address."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipients\": [\n    \"<string>\"\n  ],\n  \"stripeTokenId\": \"<string>\",\n  \"pricing\": \"<number>\",\n  \"recurring\": \"<number>\",\n  \"data\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"referrers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0e2c8062-411c-4695-bab2-1a0b5bfdeebe",
+              "name": "Created payment intent client secret, account, and other details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "intent",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"recipients\": [\n    \"<string>\"\n  ],\n  \"stripeTokenId\": \"<string>\",\n  \"pricing\": \"<number>\",\n  \"recurring\": \"<number>\",\n  \"data\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"referrers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"clientSecret\": \"string\",\n  \"stripeAccount\": \"string\",\n  \"totalPriceInDents\": 4450.871922060792,\n  \"pricing\": {\n    \"keyPrice\": 4885.132846401997,\n    \"unlockServiceFee\": 9732.87364473137,\n    \"creditCardProcessing\": 3271.3378230018197\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0ab4b83c-566a-4374-968c-15b3e75cdeb5",
+              "name": "Invalid input received. Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "intent",
+                    ":network",
+                    "locks",
+                    ":lockAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "network",
+                      "description": "(Required) Network id."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "lockAddress",
+                      "description": "(Required) Lock address."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"recipients\": [\n    \"<string>\"\n  ],\n  \"stripeTokenId\": \"<string>\",\n  \"pricing\": \"<number>\",\n  \"recurring\": \"<number>\",\n  \"data\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"referrers\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Response body schema is invalid.\",\n  \"error\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "85a98361-2d78-4cc8-bb0f-f483ddb79e90",
+          "name": "setup Payment",
+          "request": {
+            "name": "setup Payment",
+            "description": {
+              "content": "Setup a payment method for user.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "purchase",
+                "setup"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "45fc681f-bcbd-43fb-aead-696597676aa2",
+              "name": "Created setup intent client secret.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "setup"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"clientSecret\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "02c5fd36-cecd-440f-8341-bc7c20d2b0d6",
+              "name": "User is not authenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "setup"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "1dc35977-a850-41fb-8247-f12615cc8181",
+          "name": "list Payment Methods",
+          "request": {
+            "name": "list Payment Methods",
+            "description": {
+              "content": "List payment methods for user.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "purchase",
+                "list"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d68fd36c-a333-4370-b5c4-80d360976d9f",
+              "name": "Stripe payment methods for user.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "list"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"methods\": [\n    {\n      \"id\": \"string\",\n      \"object\": \"string\",\n      \"billing_details\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postal_code\": \"string\",\n          \"state\": \"string\"\n        },\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"card\": {\n        \"brand\": \"string\",\n        \"checks\": {\n          \"address_line1_check\": \"string\",\n          \"address_postal_code_check\": \"string\",\n          \"cvc_check\": \"string\"\n        },\n        \"country\": \"string\",\n        \"exp_month\": 1672.2702937836243,\n        \"exp_year\": 1420.076821176972,\n        \"fingerprint\": \"string\",\n        \"funding\": \"string\",\n        \"generated_from\": \"string\",\n        \"last4\": \"string\",\n        \"networks\": {\n          \"available\": [\n            \"string\",\n            \"string\"\n          ],\n          \"preferred\": \"string\"\n        },\n        \"three_d_secure_usage\": {\n          \"supported\": true\n        },\n        \"wallet\": \"string\"\n      },\n      \"created\": 744.7202465959823,\n      \"customer\": \"string\",\n      \"livemode\": true,\n      \"metadata\": {\n        \"key_0\": true,\n        \"key_1\": 8203\n      },\n      \"type\": \"string\"\n    },\n    {\n      \"id\": \"string\",\n      \"object\": \"string\",\n      \"billing_details\": {\n        \"address\": {\n          \"city\": \"string\",\n          \"country\": \"string\",\n          \"line1\": \"string\",\n          \"line2\": \"string\",\n          \"postal_code\": \"string\",\n          \"state\": \"string\"\n        },\n        \"email\": \"string\",\n        \"name\": \"string\",\n        \"phone\": \"string\"\n      },\n      \"card\": {\n        \"brand\": \"string\",\n        \"checks\": {\n          \"address_line1_check\": \"string\",\n          \"address_postal_code_check\": \"string\",\n          \"cvc_check\": \"string\"\n        },\n        \"country\": \"string\",\n        \"exp_month\": 1795.3143971492657,\n        \"exp_year\": 2803.689384825656,\n        \"fingerprint\": \"string\",\n        \"funding\": \"string\",\n        \"generated_from\": \"string\",\n        \"last4\": \"string\",\n        \"networks\": {\n          \"available\": [\n            \"string\",\n            \"string\"\n          ],\n          \"preferred\": \"string\"\n        },\n        \"three_d_secure_usage\": {\n          \"supported\": true\n        },\n        \"wallet\": \"string\"\n      },\n      \"created\": 8980.767628963275,\n      \"customer\": \"string\",\n      \"livemode\": false,\n      \"metadata\": {\n        \"key_0\": 5026,\n        \"key_1\": 2711,\n        \"key_2\": \"string\",\n        \"key_3\": \"string\"\n      },\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "64b14255-84d3-481c-a62a-3828c795591b",
+              "name": "User is not authenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "list"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "84c08397-48df-40ff-ae30-49d9bcea1c87",
+          "name": "remove Payment Methods",
+          "request": {
+            "name": "remove Payment Methods",
+            "description": {
+              "content": "Remove all payment methods for a user",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v2",
+                "purchase",
+                "payment-methods"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7106108d-0dd0-4167-ab3d-9cd0a500d3c8",
+              "name": "Successfully removed all payment methods",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "payment-methods"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1b73d63c-42b1-461e-bb0c-ec612f3cec05",
+              "name": "User is not authenticated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v2",
+                    "purchase",
+                    "payment-methods"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5401fee7-3227-43d6-b1a0-9354a29a22eb",
+          "name": "capture Purchase",
+          "request": {
+            "name": "capture Purchase",
+            "description": {
+              "content": "Capture a purchase",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "purchase",
+                "capture"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"network\": \"<number>\",\n  \"lock\": \"<string>\",\n  \"userAddress\": \"<string>\",\n  \"paymentIntent\": \"<string>\",\n  \"recipients\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"data\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"referrers\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"purchaseType\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "fd60f059-b560-42d0-a882-7423ba840a06",
+              "name": "Successfully captured purchase",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "purchase",
+                    "capture"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"network\": \"<number>\",\n  \"lock\": \"<string>\",\n  \"userAddress\": \"<string>\",\n  \"paymentIntent\": \"<string>\",\n  \"recipients\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"data\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"referrers\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"purchaseType\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"transactionHash\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://locksmith.unlock-protocol.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "1e8b02fd-a8e6-4f10-88ab-7d70184ccdf4",
+    "name": "Unlock Locksmith Applications Purchase API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.",
+      "type": "text/plain"
+    }
+  }
+}
