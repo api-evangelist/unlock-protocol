@@ -34,6 +34,14 @@ modified: '2026-07-21'
 tags:
 - Blockchain
 - Memberships
+- Subscription
+- NFT
+- Ticketing
+- Web3
+- Payments
+tags_raw:
+- Blockchain
+- Memberships
 - Subscriptions
 - NFT
 - Ticketing
@@ -59,6 +67,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - Application
+  tags_raw:
   - Applications
   properties:
   - type: OpenAPI
@@ -73,6 +83,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -87,6 +99,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - CAPTCHA
+  tags_raw:
   - Captcha
   properties:
   - type: OpenAPI
@@ -229,6 +243,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -257,6 +273,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - Image
+  tags_raw:
   - Images
   properties:
   - type: OpenAPI
@@ -425,6 +443,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - RSVP
+  tags_raw:
   - Rsvp
   properties:
   - type: OpenAPI
@@ -453,6 +473,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - Subscription
+  tags_raw:
   - Subscriptions
   properties:
   - type: OpenAPI
@@ -495,6 +517,8 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
