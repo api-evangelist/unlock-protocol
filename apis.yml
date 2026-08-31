@@ -111,7 +111,7 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
-  - CAPTCHA
+  - Captcha
   tags_raw:
   - Captcha
   properties:
@@ -455,7 +455,7 @@ apis:
   humanURL: https://docs.unlock-protocol.com/tools/locksmith/
   baseURL: https://locksmith.unlock-protocol.com
   tags:
-  - RSVP
+  - Rsvp
   tags_raw:
   - Rsvp
   properties:
