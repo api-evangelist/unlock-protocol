@@ -1,0 +1,44 @@
+slug: unlock-protocol
+provider: Unlock Protocol
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 3
+edges:
+- tag: Purchase
+  spec_file: unlock-protocol-purchase-api-openapi.yml
+  capability_id: BC-4250.40
+  capability_id_l1: BC-4250
+  capability_name: Payment Collection & Dunning
+  confidence: 0.8
+  evidence: POST /v2/purchase/setup  setupPayment; GET /v2/purchase/list  listPaymentMethods; DELETE /v2/purchase/payment-methods  removePaymentMethods;
+    POST /purchase/capture  capturePurchase; schema PaymentMethod
+  reason: Operations manage stored payment methods and authorise/capture payments for membership purchases,
+    which is payment-method management and payment collection.
+- tag: Subscriptions
+  spec_file: unlock-protocol-subscriptions-api-openapi.yml
+  capability_id: BC-4240.60
+  capability_id_l1: BC-4240
+  capability_name: Cancellation & Termination
+  confidence: 0.8
+  evidence: DELETE /v2/subscriptions/{network}/locks/{lockAddress}/keys/{keyId}  cancelSubscription; GET
+    .../getSubscription
+  reason: Directly retrieves and cancels the recurring subscription attached to a membership key, which
+    is subscription cancellation/termination within the subscription lifecycle.
+- tag: Receipts
+  spec_file: unlock-protocol-receipts-api-openapi.yml
+  capability_id: BC-4250.30
+  capability_id_l1: BC-4250
+  capability_name: Invoicing & Statement Management
+  confidence: 0.75
+  evidence: POST /v2/receipts/{network}/{lockAddress}/{hash}  saveReceipt; GET /v2/receipts/download/{network}/{lockAddress}  downloadReceipts
+  reason: Creates, retrieves and bulk-downloads purchase receipts for a lock — generation and delivery
+    of billing documents to customers, i.e. invoicing/statement management.
