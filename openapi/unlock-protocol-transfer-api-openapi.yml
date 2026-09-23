@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Transfer API
+  title: Unlock Locksmith Transfer API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -63,6 +63,8 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Transfer
+      summary: Create transfer code
+      x-summary-source: derived
   /v2/transfer/done:
     post:
       operationId: transferDone
@@ -133,14 +135,9 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Transfer
+      summary: Transfer done
+      x-summary-source: derived
 components:
-  responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   parameters:
     Network:
       in: path
@@ -166,12 +163,17 @@ components:
   schemas:
     GenericServerError:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
-          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

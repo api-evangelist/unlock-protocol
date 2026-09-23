@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Lock Settings API
+  title: Unlock Locksmith Lock Settings API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -28,6 +28,8 @@ paths:
                 $ref: '#/components/schemas/LockSettings'
       tags:
       - Lock Settings
+      summary: Get lock settings by slug
+      x-summary-source: derived
   /v2/lock-settings/{network}/locks/{lockAddress}:
     get:
       operationId: getLockSettings
@@ -62,6 +64,8 @@ paths:
                     type: string
       tags:
       - Lock Settings
+      summary: Get lock settings
+      x-summary-source: derived
     post:
       operationId: saveLockSetting
       security:
@@ -98,74 +102,9 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Lock Settings
+      summary: Save lock setting
+      x-summary-source: derived
 components:
-  schemas:
-    LockSettings:
-      type: object
-      nullable: false
-      properties:
-        lockAddress:
-          type: string
-        network:
-          type: number
-        sendEmail:
-          type: boolean
-        slug:
-          type: string
-        replyTo:
-          type: string
-          nullable: true
-        creditCardPrice:
-          type: number
-          nullable: true
-        emailSender:
-          type: string
-          nullable: true
-        checkoutConfigId:
-          type: string
-          nullable: true
-        hookGuildId:
-          type: string
-          nullable: true
-        unlockFeeChargedToUser:
-          type: boolean
-        creditCardCurrency:
-          type: string
-          default: usd
-        crossmintClientId:
-          type: string
-          nullable: true
-        promoCodes:
-          type: array
-          items:
-            type: string
-        passwords:
-          type: array
-          items:
-            type: string
-        requiredGitcoinPassportScore:
-          type: number
-          nullable: true
-        allowList:
-          type: array
-          items:
-            type: string
-          nullable: true
-    GenericServerError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-          nullable: false
-  responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   parameters:
     Network:
       in: path
@@ -188,6 +127,78 @@ components:
       description: Slug
       schema:
         type: string
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    LockSettings:
+      type: object
+      properties:
+        lockAddress:
+          type: string
+        network:
+          type: number
+        sendEmail:
+          type: boolean
+        slug:
+          type: string
+        replyTo:
+          type:
+          - string
+          - 'null'
+        creditCardPrice:
+          type:
+          - number
+          - 'null'
+        emailSender:
+          type:
+          - string
+          - 'null'
+        checkoutConfigId:
+          type:
+          - string
+          - 'null'
+        hookGuildId:
+          type:
+          - string
+          - 'null'
+        unlockFeeChargedToUser:
+          type: boolean
+        creditCardCurrency:
+          type: string
+          default: usd
+        crossmintClientId:
+          type:
+          - string
+          - 'null'
+        promoCodes:
+          type: array
+          items:
+            type: string
+        passwords:
+          type: array
+          items:
+            type: string
+        requiredGitcoinPassportScore:
+          type:
+          - number
+          - 'null'
+        allowList:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Subscriptions API
+  title: Unlock Locksmith Subscriptions API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -30,6 +30,8 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Subscriptions
+      summary: Cancel subscription
+      x-summary-source: derived
     get:
       operationId: getSubscription
       description: Get an active subscription associated with the key. It can be fiat or crypto.
@@ -53,8 +55,9 @@ paths:
                       type: object
                       properties:
                         next:
-                          type: number
-                          nullable: true
+                          type:
+                          - number
+                          - 'null'
                         balance:
                           type: object
                           properties:
@@ -88,14 +91,9 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Subscriptions
+      summary: Get subscription
+      x-summary-source: derived
 components:
-  responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   parameters:
     Network:
       in: path
@@ -121,12 +119,17 @@ components:
   schemas:
     GenericServerError:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
-          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

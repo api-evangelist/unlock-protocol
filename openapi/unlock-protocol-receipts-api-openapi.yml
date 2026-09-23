@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Receipts API
+  title: Unlock Locksmith Receipts API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -85,6 +85,8 @@ paths:
                     type: string
       tags:
       - Receipts
+      summary: Get receipts status
+      x-summary-source: derived
     post:
       operationId: createDownloadReceiptsRequest
       security:
@@ -120,6 +122,8 @@ paths:
                     type: string
       tags:
       - Receipts
+      summary: Create download receipts request
+      x-summary-source: derived
   /v2/receipts/download/{network}/{lockAddress}:
     get:
       operationId: downloadReceipts
@@ -161,6 +165,8 @@ paths:
                     type: string
       tags:
       - Receipts
+      summary: Download receipts
+      x-summary-source: derived
   /v2/receipts/{network}/{lockAddress}/all:
     get:
       operationId: getReceipts
@@ -224,6 +230,8 @@ paths:
           description: Impossible to retrieve receipt details.
       tags:
       - Receipts
+      summary: Get receipts
+      x-summary-source: derived
   /v2/receipts/{network}/{lockAddress}/{hash}:
     get:
       operationId: getReceipt
@@ -322,6 +330,8 @@ paths:
           description: Impossible to retrieve receipt details.
       tags:
       - Receipts
+      summary: Get receipt
+      x-summary-source: derived
     post:
       operationId: saveReceipt
       security:
@@ -370,14 +380,9 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Receipts
+      summary: Save receipt
+      x-summary-source: derived
 components:
-  responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   parameters:
     Network:
       in: path
@@ -403,12 +408,17 @@ components:
   schemas:
     GenericServerError:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
-          nullable: false
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Locks API
+  title: Unlock Locksmith Locks API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -62,7 +62,6 @@ paths:
           content:
             application/json:
               schema:
-                nullable: false
                 type: array
                 items:
                   $ref: '#/components/schemas/KeyMetadata'
@@ -72,6 +71,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Locks
+      summary: Keys
+      x-summary-source: derived
   /v2/api/{network}/locks/{lockAddress}/keys-by-page:
     get:
       operationId: keysByPage
@@ -120,7 +121,6 @@ paths:
           content:
             application/json:
               schema:
-                nullable: false
                 type: object
                 properties:
                   meta:
@@ -133,7 +133,6 @@ paths:
                       byPage:
                         type: integer
                   keys:
-                    nullable: false
                     type: array
                     items:
                       $ref: '#/components/schemas/KeyMetadata'
@@ -143,6 +142,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Locks
+      summary: Keys by page
+      x-summary-source: derived
   /v2/api/{network}/locks/{lockAddress}/export-keys:
     get:
       operationId: exportKeys
@@ -191,6 +192,8 @@ paths:
           description: Not Found
       tags:
       - Locks
+      summary: Export keys
+      x-summary-source: derived
   /v2/api/{network}/locks/{lockAddress}/export-keys/{jobId}:
     get:
       operationId: getExportedKeys
@@ -208,7 +211,6 @@ paths:
           content:
             application/json:
               schema:
-                nullable: false
                 type: object
                 properties:
                   meta:
@@ -221,7 +223,6 @@ paths:
                       byPage:
                         type: integer
                   keys:
-                    nullable: false
                     type: array
                     items:
                       $ref: '#/components/schemas/KeyMetadata'
@@ -231,28 +232,10 @@ paths:
           description: Job not found
       tags:
       - Locks
+      summary: Get exported keys
+      x-summary-source: derived
 components:
-  responses:
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   parameters:
-    JobId:
-      in: path
-      name: jobId
-      required: true
-      description: Id of the exported job.
-      schema:
-        type: string
     Network:
       in: path
       name: network
@@ -267,42 +250,52 @@ components:
       description: Lock address.
       schema:
         type: string
+    JobId:
+      in: path
+      name: jobId
+      required: true
+      description: Id of the exported job.
+      schema:
+        type: string
   schemas:
-    GenericServerError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-          nullable: false
     KeyMetadata:
       type: object
-      nullable: false
       properties:
         token:
           type: string
-          nullable: false
         lockName:
           type: string
-          nullable: false
         lockAddress:
           type: string
-          nullable: false
         expiration:
           type: integer
-          nullable: false
         keyHolderAddress:
           type: string
-          nullable: false
     GenericNotFound:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: resource not found
-          nullable: false
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
   securitySchemes:
     User:
       type: http

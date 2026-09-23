@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Credit Card Details API
+  title: Unlock Locksmith Credit Card Details API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -32,6 +32,8 @@ paths:
                     type: boolean
       tags:
       - Credit Card Details
+      summary: Is card payment enabled for lock
+      x-summary-source: derived
 components:
   parameters:
     Network:

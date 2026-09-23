@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Auth API
+  title: Unlock Locksmith Auth API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -25,11 +25,12 @@ paths:
             html/text:
               schema:
                 type: string
-                nullable: false
         500:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Auth
+      summary: Nonce
+      x-summary-source: derived
   /v2/auth/login:
     post:
       operationId: login
@@ -60,6 +61,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Auth
+      summary: Login
+      x-summary-source: derived
   /v2/auth/privy:
     post:
       operationId: loginWithPrivy
@@ -95,6 +98,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Auth
+      summary: Login with privy
+      x-summary-source: derived
   /v2/auth/logout:
     post:
       operationId: logout
@@ -108,6 +113,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Auth
+      summary: Logout
+      x-summary-source: derived
   /v2/auth/revoke:
     post:
       operationId: revoke
@@ -121,6 +128,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Auth
+      summary: Revoke
+      x-summary-source: derived
   /v2/auth/user:
     get:
       operationId: user
@@ -138,27 +147,41 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Auth
+      summary: User
+      x-summary-source: derived
 components:
+  responses:
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    200.GenericSuccess:
+      description: Successfully completed the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericSuccess'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
   schemas:
-    GenericInvalidBodyError:
+    GenericSuccess:
       type: object
-      nullable: false
       properties:
         message:
           type: string
-          default: Response body schema is invalid.
-          nullable: false
-        error:
-          type: string
-          nullable: true
-    Auth:
-      required:
-      - walletAddress
-      type: object
-      properties:
-        walletAddress:
-          type: string
-          nullable: false
+          default: Successfully fulfilled the request.
     AuthResult:
       required:
       - accessToken
@@ -166,60 +189,40 @@ components:
       type: object
       properties:
         walletAddress:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         accessToken:
           type: string
-          nullable: false
     GenericServerError:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
-          nullable: false
-    GenericSuccess:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: Successfully fulfilled the request.
-          nullable: false
     GenericNotFound:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: resource not found
-          nullable: false
-  responses:
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
-    200.GenericSuccess:
-      description: Successfully completed the request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericSuccess'
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    Auth:
+      required:
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
   securitySchemes:
     User:
       type: http

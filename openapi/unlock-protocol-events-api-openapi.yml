@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Events API
+  title: Unlock Locksmith Events API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -42,6 +42,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Event verifiers
+      x-summary-source: derived
   /v2/events/{slug}/verifiers/{verifierAddress}:
     put:
       operationId: addEventVerifier
@@ -77,6 +79,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Add event verifier
+      x-summary-source: derived
     delete:
       operationId: deleteEventVerifier
       security:
@@ -105,6 +109,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Delete event verifier
+      x-summary-source: derived
   /v2/events/{slug}/approve-refunds:
     post:
       operationId: approveRefunds
@@ -126,13 +132,12 @@ paths:
               properties:
                 amount:
                   type: number
-                  nullable: false
                 currency:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                 network:
                   type: number
-                  nullable: false
       responses:
         201:
           description: Approves refunds for an event.
@@ -147,7 +152,6 @@ paths:
                 properties:
                   format:
                     type: string
-                    nullable: false
                   values:
                     type: array
                     items:
@@ -162,6 +166,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Approve refunds
+      x-summary-source: derived
   /v2/events/approved-refunds/{slug}:
     get:
       operationId: approvedRefunds
@@ -184,12 +190,10 @@ paths:
                     type: string
                     enum:
                     - standard-v1
-                    nullable: false
                   leafEncoding:
                     type: array
                     items:
                       type: string
-                    nullable: false
                   values:
                     type: array
                     items:
@@ -198,7 +202,6 @@ paths:
                         value:
                           type: array
                           items: {}
-                          nullable: false
                         treeIndex:
                           type: number
                   tree:
@@ -211,6 +214,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Approved refunds
+      x-summary-source: derived
   /v2/events/{network}/{lockAddress}:
     get:
       deprecated: true
@@ -228,12 +233,13 @@ paths:
                 $ref: '#/components/schemas/EventDetails'
       tags:
       - Events
+      summary: Get event details
+      x-summary-source: derived
   /v2/events/save:
     post:
       operationId: saveEventData
       security:
       - User: []
-      description: Save event data
       requestBody:
         required: true
         content:
@@ -266,12 +272,13 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Save event data
+      x-summary-source: derived
   /v2/events/update/{slug}:
     post:
       operationId: updateEventData
       security:
       - User: []
-      description: Update event data
       parameters:
       - name: slug
         in: path
@@ -313,6 +320,8 @@ paths:
           $ref: '#/components/responses/404.NotFound'
       tags:
       - Events
+      summary: Update event data
+      x-summary-source: derived
   /v2/events/{slug}:
     get:
       operationId: getEvent
@@ -341,6 +350,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Get event
+      x-summary-source: derived
   /v2/events/external/save:
     post:
       operationId: saveExternalEventData
@@ -421,35 +432,140 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Events
+      summary: Save external event data
+      x-summary-source: derived
 components:
+  responses:
+    204.Empty:
+      description: No response. Request acknowledged.
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   schemas:
-    GenericInvalidBodyError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-          nullable: false
-        error:
-          type: string
-          nullable: true
-    GenericServerError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-          nullable: false
     GenericNotFound:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: resource not found
-          nullable: false
+    CheckoutConfig:
+      type: object
+      required:
+      - config
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        by:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+          required:
+          - locks
+          properties:
+            locks:
+              type: object
+              additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    EventDetails:
+      type: object
+      properties:
+        eventName:
+          type: string
+        eventDescription:
+          type: string
+        eventDate:
+          type: string
+        eventTime:
+          type: string
+        eventAddress:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        eventUrl:
+          type: string
+    Verifier:
+      type: object
+      required:
+      - address
+      properties:
+        address:
+          type: string
+        lockAddress:
+          type: string
+        lockManager:
+          type: string
+        network:
+          type: integer
+        name:
+          type:
+          - string
+          - 'null'
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
     Event:
       type: object
       required:
@@ -492,127 +608,12 @@ components:
                 type: string
               value:
                 type: string
-    NotAuthenticated:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-          nullable: false
-    CheckoutConfig:
-      type: object
-      required:
-      - config
-      - name
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        by:
-          type: string
-        config:
-          type: object
-          additionalProperties: true
-          required:
-          - locks
-          properties:
-            locks:
-              type: object
-              additionalProperties: true
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    Verifier:
-      type: object
-      nullable: false
-      required:
-      - address
-      properties:
-        address:
-          type: string
-          nullable: false
-        lockAddress:
-          type: string
-          nullable: false
-        lockManager:
-          type: string
-          nullable: false
-        network:
-          type: integer
-          nullable: false
-        name:
-          type: string
-          nullable: true
-    EventDetails:
-      type: object
-      nullable: false
-      properties:
-        eventName:
-          type: string
-        eventDescription:
-          type: string
-        eventDate:
-          type: string
-        eventTime:
-          type: string
-        eventAddress:
-          type: string
-        startDate:
-          type: string
-        endDate:
-          type: string
-        eventUrl:
-          type: string
-  responses:
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    409.Conflict:
-      description: There is a conflict. The resource already exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    204.Empty:
-      description: No response. Request acknowledged.
   parameters:
-    LockAddress:
+    Slug:
       in: path
-      name: lockAddress
+      name: slug
       required: true
-      description: Lock address.
+      description: Slug
       schema:
         type: string
     Network:
@@ -622,11 +623,11 @@ components:
       description: Network id.
       schema:
         type: integer
-    Slug:
+    LockAddress:
       in: path
-      name: slug
+      name: lockAddress
       required: true
-      description: Slug
+      description: Lock address.
       schema:
         type: string
     VerifierAddress:

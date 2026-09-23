@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Claim API
+  title: Unlock Locksmith Claim API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -68,6 +68,8 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Claim
+      summary: Claim
+      x-summary-source: derived
   /claim/{network}/locks/{lockAddress}:
     post:
       description: Check if claim is possible for a given purchase
@@ -105,27 +107,9 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Claim
+      summary: Check claim
+      x-summary-source: derived
 components:
-  schemas:
-    GenericInvalidBodyError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-          nullable: false
-        error:
-          type: string
-          nullable: true
-    GenericServerError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-          nullable: false
   responses:
     400.Invalid:
       description: Invalid input received. Bad request.
@@ -133,16 +117,16 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericInvalidBodyError'
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
       content:
         application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
   parameters:
@@ -160,6 +144,23 @@ components:
       description: Lock address.
       schema:
         type: string
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

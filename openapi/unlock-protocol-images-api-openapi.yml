@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Images API
+  title: Unlock Locksmith Images API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -70,16 +70,9 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Images
+      summary: Upload images
+      x-summary-source: derived
 components:
-  schemas:
-    GenericServerError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-          nullable: false
   responses:
     401.NotAuthenticated:
       description: User is not authenticated.
@@ -87,6 +80,13 @@ components:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

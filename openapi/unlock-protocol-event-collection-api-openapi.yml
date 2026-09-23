@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Event Collection API
+  title: Unlock Locksmith Event Collection API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -38,6 +38,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Create event collection
+      x-summary-source: derived
   /v2/event-collection/{slug}:
     get:
       operationId: getEventCollection
@@ -61,6 +63,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Get event collection
+      x-summary-source: derived
     put:
       operationId: updateEventCollection
       security:
@@ -93,6 +97,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Update event collection
+      x-summary-source: derived
   /v2/event-collection/{slug}/events:
     post:
       operationId: addEventToCollection
@@ -126,6 +132,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Add event to collection
+      x-summary-source: derived
     get:
       operationId: getEventsInCollection
       parameters:
@@ -158,6 +166,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Get events in collection
+      x-summary-source: derived
     delete:
       operationId: removeEventFromCollection
       security:
@@ -193,6 +203,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Remove event from collection
+      x-summary-source: derived
   /v2/event-collection/{slug}/managers:
     post:
       operationId: addManagerToEventCollection
@@ -230,6 +242,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Add manager to event collection
+      x-summary-source: derived
     delete:
       operationId: removeManagerFromEventCollection
       security:
@@ -266,6 +280,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Remove manager from event collection
+      x-summary-source: derived
   /v2/event-collection/{slug}/unapproved-events:
     get:
       operationId: getUnapprovedEventsForCollection
@@ -297,6 +313,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Get unapproved events for collection
+      x-summary-source: derived
   /v2/event-collection/{slug}/events/approve:
     post:
       operationId: approveEvent
@@ -333,6 +351,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Approve event
+      x-summary-source: derived
   /v2/event-collection/{slug}/events/bulk-approve:
     post:
       operationId: bulkApproveEvents
@@ -371,6 +391,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Bulk approve events
+      x-summary-source: derived
   /v2/event-collection/{slug}/events/bulk-remove:
     delete:
       operationId: bulkRemoveEvents
@@ -407,6 +429,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Bulk remove events
+      x-summary-source: derived
   /v2/event-collection/by-manager/{managerAddress}:
     get:
       operationId: getEventCollectionsByManager
@@ -432,34 +456,53 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Event Collection
+      summary: Get event collections by manager
+      x-summary-source: derived
 components:
   schemas:
-    GenericInvalidBodyError:
+    GenericNotFound:
       type: object
-      nullable: false
       properties:
         message:
           type: string
-          default: Response body schema is invalid.
-          nullable: false
-        error:
+          default: resource not found
+    EventCollectionAssociation:
+      type: object
+      properties:
+        id:
+          type: integer
+        eventSlug:
           type: string
-          nullable: true
-    AddManagerBody:
+        collectionSlug:
+          type: string
+        isApproved:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    RemoveManagerBody:
       type: object
       required:
-      - newManagerAddress
+      - managerAddressToRemove
       properties:
-        newManagerAddress:
+        managerAddressToRemove:
           type: string
-    GenericServerError:
+    EventsInCollection:
       type: object
-      nullable: false
       properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-          nullable: false
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
     BulkRemoveEventsBody:
       type: object
       required:
@@ -470,14 +513,51 @@ components:
           description: Array of event slugs to remove.
           items:
             type: string
-    GenericNotFound:
+    AddManagerBody:
       type: object
-      nullable: false
+      required:
+      - newManagerAddress
       properties:
-        message:
+        newManagerAddress:
           type: string
-          default: resource not found
-          nullable: false
+    AddEventToCollectionBody:
+      type: object
+      required:
+      - eventSlug
+      properties:
+        eventSlug:
+          type: string
+    EventCollection:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        coverImage:
+          type: string
+        banner:
+          type: string
+        links:
+          type: object
+          additionalProperties:
+            type: string
+        managerAddresses:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
     EventCollectionBody:
       type: object
       required:
@@ -506,6 +586,54 @@ components:
           type: array
           items:
             type: string
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    BulkApproveEventsBody:
+      type: object
+      required:
+      - eventSlugs
+      properties:
+        eventSlugs:
+          type: array
+          description: Array of event slugs to approve.
+          items:
+            type: string
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    RemoveEventBody:
+      type: object
+      required:
+      - eventSlug
+      properties:
+        eventSlug:
+          type: string
+          description: Slug of the event to remove.
+    ApproveEventBody:
+      type: object
+      required:
+      - eventSlug
+      properties:
+        eventSlug:
+          type: string
+          description: Slug of the event to approve.
     Event:
       type: object
       required:
@@ -548,116 +676,25 @@ components:
                 type: string
               value:
                 type: string
-    NotAuthenticated:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-          nullable: false
-    BulkApproveEventsBody:
-      type: object
-      required:
-      - eventSlugs
-      properties:
-        eventSlugs:
-          type: array
-          description: Array of event slugs to approve.
-          items:
-            type: string
-    RemoveManagerBody:
-      type: object
-      required:
-      - managerAddressToRemove
-      properties:
-        managerAddressToRemove:
-          type: string
-    EventCollection:
-      type: object
-      properties:
-        slug:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        coverImage:
-          type: string
-        banner:
-          type: string
-        links:
-          type: object
-          additionalProperties:
-            type: string
-        managerAddresses:
-          type: array
-          items:
-            type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event'
-    EventsInCollection:
-      type: object
-      properties:
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event'
-        totalCount:
-          type: integer
-        currentPage:
-          type: integer
-        totalPages:
-          type: integer
-    RemoveEventBody:
-      type: object
-      required:
-      - eventSlug
-      properties:
-        eventSlug:
-          type: string
-          description: Slug of the event to remove.
-    ApproveEventBody:
-      type: object
-      required:
-      - eventSlug
-      properties:
-        eventSlug:
-          type: string
-          description: Slug of the event to approve.
-    AddEventToCollectionBody:
-      type: object
-      required:
-      - eventSlug
-      properties:
-        eventSlug:
-          type: string
-    EventCollectionAssociation:
-      type: object
-      properties:
-        id:
-          type: integer
-        eventSlug:
-          type: string
-        collectionSlug:
-          type: string
-        isApproved:
-          type: boolean
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
   responses:
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
     400.Invalid:
       description: Invalid input received. Bad request.
       content:
@@ -676,25 +713,7 @@ components:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
     403.Forbidden:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    403.NotAuthenticatedOrAuthorized:
       description: User is not authorized to perform this action.
       content:
         application/json:

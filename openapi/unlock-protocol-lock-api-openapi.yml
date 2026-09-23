@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Lock API
+  title: Unlock Locksmith Lock API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -29,6 +29,8 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Lock
+      summary: Disconnect stripe
+      x-summary-source: derived
   /lock/{lockAddress}/stripe-connected:
     get:
       operationId: getLockStripeConnectionDetails
@@ -74,7 +76,16 @@ paths:
                     type: number
       tags:
       - Lock
+      summary: Get lock stripe connection details
+      x-summary-source: derived
 components:
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   parameters:
     Network:
       in: path
@@ -93,19 +104,10 @@ components:
   schemas:
     GenericServerError:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
-          nullable: false
-  responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

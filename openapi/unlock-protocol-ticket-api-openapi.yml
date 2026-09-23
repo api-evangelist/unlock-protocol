@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Unlock Locksmith Applications Ticket API
+  title: Unlock Locksmith Ticket API
   version: '2'
   description: Locksmith provides backend functionality for enabling ticketing, metadata storage, and notification hooks.
   license:
@@ -34,10 +34,8 @@ paths:
                 properties:
                   payload:
                     type: string
-                    nullable: false
                   signature:
                     type: string
-                    nullable: false
         403:
           $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
         404:
@@ -46,6 +44,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Ticket
+      summary: Sign ticket
+      x-summary-source: derived
   /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}/check:
     put:
       operationId: checkTicket
@@ -75,6 +75,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Ticket
+      summary: Check ticket
+      x-summary-source: derived
   /v2/api/ticket/{slug}/{network}/lock/{lockAddress}/key/{keyId}/check:
     put:
       operationId: checkEventTicket
@@ -104,6 +106,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Ticket
+      summary: Check event ticket
+      x-summary-source: derived
   /v2/api/ticket/{slug}/{network}/lock/{lockAddress}/key/{keyId}:
     get:
       operationId: getEventTicket
@@ -121,7 +125,6 @@ paths:
           content:
             application/json:
               schema:
-                nullable: false
                 required:
                 - name
                 - lockAddress
@@ -180,6 +183,8 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Ticket
+      summary: Get event ticket
+      x-summary-source: derived
   /v2/api/ticket/{network}/{lockAddress}/{keyId}/email:
     post:
       operationId: emailTicket
@@ -202,7 +207,6 @@ paths:
                   sent:
                     type: boolean
                     default: true
-                    nullable: false
         403:
           $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
         404:
@@ -211,6 +215,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Ticket
+      summary: Email ticket
+      x-summary-source: derived
   /v2/api/ticket/{network}/{lockAddress}/{keyId}/qr:
     get:
       operationId: ticketQRCode
@@ -228,8 +234,7 @@ paths:
           description: QR code image.
           content:
             image/gif:
-              schema:
-                nullable: true
+              schema: {}
         403:
           $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
         404:
@@ -238,6 +243,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Ticket
+      summary: Ticket QR code
+      x-summary-source: derived
   /v2/api/ticket/{network}/{lockAddress}/{keyId}/verification:
     get:
       operationId: ticketVerificationUrl
@@ -256,12 +263,10 @@ paths:
           content:
             application/json:
               schema:
-                nullable: false
                 type: object
                 properties:
                   verificationUrl:
                     type: string
-                    nullable: false
         403:
           $ref: '#/components/responses/403.NotAuthenticatedOrAuthorized'
         404:
@@ -270,6 +275,8 @@ paths:
           $ref: '#/components/responses/500.InternalError'
       tags:
       - Ticket
+      summary: Ticket verification url
+      x-summary-source: derived
   /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}/generate:
     get:
       operationId: generateTicket
@@ -287,6 +294,8 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Ticket
+      summary: Generate ticket
+      x-summary-source: derived
   /v2/api/ticket/{network}/lock/{lockAddress}/key/{keyId}:
     get:
       operationId: getTicket
@@ -303,7 +312,6 @@ paths:
           content:
             application/json:
               schema:
-                nullable: false
                 required:
                 - name
                 - lockAddress
@@ -362,8 +370,57 @@ paths:
           $ref: '#/components/responses/401.NotAuthenticated'
       tags:
       - Ticket
+      summary: Get ticket
+      x-summary-source: derived
 components:
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
   responses:
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
     404.NotFound:
       description: The item you are making request for does not exist.
       content:
@@ -376,86 +433,31 @@ components:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    409.Conflict:
-      description: There is a conflict. The resource already exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-  parameters:
-    Slug:
-      in: path
-      name: slug
-      required: true
-      description: Slug
-      schema:
-        type: string
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
   schemas:
-    GenericServerError:
-      type: object
-      nullable: false
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-          nullable: false
     NotAuthenticated:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: You are not authorized or authenticated to perform this action.
-          nullable: false
     GenericSuccess:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: Successfully fulfilled the request.
-          nullable: false
     GenericNotFound:
       type: object
-      nullable: false
       properties:
         message:
           type: string
           default: resource not found
-          nullable: false
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http
