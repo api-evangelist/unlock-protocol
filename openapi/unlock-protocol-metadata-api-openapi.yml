@@ -265,71 +265,42 @@ paths:
       x-summary-source: derived
 components:
   responses:
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
     409.Conflict:
       description: There is a conflict. The resource already exist.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GenericNotFound'
+            $ref: '#/components/schemas/GenericServerError'
     401.NotAuthenticated:
       description: User is not authenticated.
       content:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-  parameters:
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
-    UserAddress:
-      in: path
-      name: userAddress
-      required: true
-      description: User address.
-      schema:
-        type: string
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
   schemas:
     NotAuthenticated:
       type: object
@@ -337,22 +308,6 @@ components:
         message:
           type: string
           default: You are not authorized or authenticated to perform this action.
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
     UserMetadata:
       type: object
       required:
@@ -369,6 +324,22 @@ components:
           type: string
         metadata:
           $ref: '#/components/schemas/UserMetadataInput'
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
     UserMetadataInput:
       type: object
       properties:
@@ -384,12 +355,41 @@ components:
           - 'null'
           default: {}
           additionalProperties: true
-    GenericServerError:
+    GenericNotFound:
       type: object
       properties:
         message:
           type: string
-          default: There was an error in fullfiling the request.
+          default: resource not found
+  parameters:
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
+    UserAddress:
+      in: path
+      name: userAddress
+      required: true
+      description: User address.
+      schema:
+        type: string
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
   securitySchemes:
     User:
       type: http

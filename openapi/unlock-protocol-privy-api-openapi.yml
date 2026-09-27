@@ -60,21 +60,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    PrivyUserCheckBody:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          description: Email address to check
-        address:
-          type: string
-          description: Ethereum wallet address to check
-      oneOf:
-      - required:
-        - email
-      - required:
-        - address
     PrivyUserResponse:
       type: object
       required:
@@ -133,6 +118,21 @@ components:
                 latestVerifiedAt:
                   type: string
                   format: date-time
+    PrivyUserCheckBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address to check
+        address:
+          type: string
+          description: Ethereum wallet address to check
+      oneOf:
+      - required:
+        - email
+      - required:
+        - address
   securitySchemes:
     User:
       type: http

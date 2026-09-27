@@ -42,7 +42,27 @@ paths:
       summary: Generate certificate
       x-summary-source: derived
 components:
+  schemas:
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   parameters:
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
     Network:
       in: path
       name: network
@@ -57,39 +77,19 @@ components:
       description: Lock address.
       schema:
         type: string
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
   responses:
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
     401.NotAuthenticated:
       description: User is not authenticated.
       content:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-  schemas:
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
   securitySchemes:
     User:
       type: http

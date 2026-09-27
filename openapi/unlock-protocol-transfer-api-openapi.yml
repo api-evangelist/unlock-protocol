@@ -139,6 +139,13 @@ paths:
       x-summary-source: derived
 components:
   parameters:
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
     Network:
       in: path
       name: network
@@ -153,20 +160,6 @@ components:
       description: Lock address.
       schema:
         type: string
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
-  schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
   responses:
     401.NotAuthenticated:
       description: User is not authenticated.
@@ -174,6 +167,13 @@ components:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

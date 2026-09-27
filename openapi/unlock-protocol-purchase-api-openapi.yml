@@ -245,12 +245,6 @@ paths:
       x-summary-source: derived
 components:
   responses:
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
       content:
@@ -263,6 +257,12 @@ components:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
   parameters:
     Network:
       in: path
@@ -279,16 +279,6 @@ components:
       schema:
         type: string
   schemas:
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
     PaymentMethod:
       type: object
       properties:
@@ -393,6 +383,16 @@ components:
         message:
           type: string
           default: There was an error in fullfiling the request.
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
   securitySchemes:
     User:
       type: http

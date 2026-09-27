@@ -64,6 +64,20 @@ paths:
       summary: Price
       x-summary-source: derived
 components:
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   parameters:
     Network:
       in: path
@@ -72,20 +86,6 @@ components:
       description: Network id.
       schema:
         type: integer
-  responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-  schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

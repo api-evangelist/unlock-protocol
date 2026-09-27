@@ -131,13 +131,6 @@ paths:
       summary: List checkout configs
       x-summary-source: derived
 components:
-  responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   schemas:
     CheckoutConfig:
       type: object
@@ -172,6 +165,13 @@ components:
         message:
           type: string
           default: There was an error in fullfiling the request.
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

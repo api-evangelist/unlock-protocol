@@ -52,14 +52,6 @@ paths:
       summary: Create lock contract
       x-summary-source: derived
 components:
-  parameters:
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
   responses:
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
@@ -73,13 +65,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
   schemas:
-    GenericNotFound:
+    GenericServerError:
       type: object
       properties:
         message:
           type: string
-          default: resource not found
+          default: There was an error in fullfiling the request.
     LockContractOptions:
       type: object
       properties:
@@ -107,12 +107,12 @@ components:
           type:
           - number
           - 'null'
-    GenericServerError:
+    GenericNotFound:
       type: object
       properties:
         message:
           type: string
-          default: There was an error in fullfiling the request.
+          default: resource not found
   securitySchemes:
     User:
       type: http

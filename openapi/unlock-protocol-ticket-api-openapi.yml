@@ -373,52 +373,23 @@ paths:
       summary: Get ticket
       x-summary-source: derived
 components:
-  parameters:
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
-    Slug:
-      in: path
-      name: slug
-      required: true
-      description: Slug
-      schema:
-        type: string
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
   responses:
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/NotAuthenticated'
+            $ref: '#/components/schemas/GenericServerError'
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    409.Conflict:
-      description: There is a conflict. The resource already exist.
+    401.NotAuthenticated:
+      description: User is not authenticated.
       content:
-        application/json:
+        application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
     404.NotFound:
@@ -427,12 +398,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
-    401.NotAuthenticated:
-      description: User is not authenticated.
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
       content:
-        application:
+        application/json:
           schema:
-            $ref: '#/components/schemas/GenericServerError'
+            $ref: '#/components/schemas/NotAuthenticated'
   schemas:
     NotAuthenticated:
       type: object
@@ -446,18 +417,47 @@ components:
         message:
           type: string
           default: Successfully fulfilled the request.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
     GenericServerError:
       type: object
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+  parameters:
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
   securitySchemes:
     User:
       type: http

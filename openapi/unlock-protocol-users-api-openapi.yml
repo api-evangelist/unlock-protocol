@@ -338,13 +338,26 @@ paths:
       summary: Eject user
       x-summary-source: derived
 components:
+  schemas:
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
   responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
       content:
@@ -357,6 +370,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/NotAuthenticated'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
     404.NotFound:
       description: The item you are making request for does not exist.
       content:
@@ -373,25 +392,6 @@ components:
               error:
                 type: string
                 example: Bad request due to invalid input.
-  schemas:
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

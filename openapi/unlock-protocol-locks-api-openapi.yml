@@ -236,6 +236,13 @@ paths:
       x-summary-source: derived
 components:
   parameters:
+    JobId:
+      in: path
+      name: jobId
+      required: true
+      description: Id of the exported job.
+      schema:
+        type: string
     Network:
       in: path
       name: network
@@ -250,13 +257,19 @@ components:
       description: Lock address.
       schema:
         type: string
-    JobId:
-      in: path
-      name: jobId
-      required: true
-      description: Id of the exported job.
-      schema:
-        type: string
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
   schemas:
     KeyMetadata:
       type: object
@@ -271,31 +284,18 @@ components:
           type: integer
         keyHolderAddress:
           type: string
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
     GenericServerError:
       type: object
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
-  responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
   securitySchemes:
     User:
       type: http

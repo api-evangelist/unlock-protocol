@@ -151,12 +151,6 @@ paths:
       x-summary-source: derived
 components:
   responses:
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
     200.GenericSuccess:
       description: Successfully completed the request.
       content:
@@ -169,6 +163,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
     404.NotFound:
       description: The item you are making request for does not exist.
       content:
@@ -182,6 +182,29 @@ components:
         message:
           type: string
           default: Successfully fulfilled the request.
+    Auth:
+      required:
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
     AuthResult:
       required:
       - accessToken
@@ -194,35 +217,12 @@ components:
           - 'null'
         accessToken:
           type: string
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
     GenericNotFound:
       type: object
       properties:
         message:
           type: string
           default: resource not found
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
-    Auth:
-      required:
-      - walletAddress
-      type: object
-      properties:
-        walletAddress:
-          type: string
   securitySchemes:
     User:
       type: http

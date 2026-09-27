@@ -137,32 +137,19 @@ paths:
       summary: Update application
       x-summary-source: derived
 components:
-  responses:
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
   schemas:
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Successfully fulfilled the request.
     Application:
       type: object
       properties:
@@ -176,30 +163,12 @@ components:
           - 'null'
         walletAddress:
           type: string
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-    GenericSuccess:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Successfully fulfilled the request.
     GenericServerError:
       type: object
       properties:
         message:
           type: string
           default: There was an error in fullfiling the request.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
     GenericInvalidBodyError:
       type: object
       properties:
@@ -221,6 +190,37 @@ components:
           - 'null'
         walletAddress:
           type: string
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
   securitySchemes:
     User:
       type: http

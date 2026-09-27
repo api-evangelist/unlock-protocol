@@ -67,6 +67,13 @@ paths:
       x-summary-source: derived
 components:
   parameters:
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
     Network:
       in: path
       name: network
@@ -79,13 +86,6 @@ components:
       name: lockAddress
       required: true
       description: Lock address.
-      schema:
-        type: string
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
       schema:
         type: string
   responses:

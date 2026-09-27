@@ -151,55 +151,33 @@ paths:
       summary: Verifier
       x-summary-source: derived
 components:
-  parameters:
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    VerifierAddress:
-      in: path
-      name: verifierAddress
-      required: true
-      description: User address to use as verifier
-      schema:
-        type: string
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
   responses:
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    204.Empty:
-      description: No response. Request acknowledged.
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
     409.Conflict:
       description: There is a conflict. The resource already exist.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    204.Empty:
+      description: No response. Request acknowledged.
     404.NotFound:
       description: The item you are making request for does not exist.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
   schemas:
     NotAuthenticated:
       type: object
@@ -207,12 +185,6 @@ components:
         message:
           type: string
           default: You are not authorized or authenticated to perform this action.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
     GenericServerError:
       type: object
       properties:
@@ -236,6 +208,34 @@ components:
           type:
           - string
           - 'null'
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    VerifierAddress:
+      in: path
+      name: verifierAddress
+      required: true
+      description: User address to use as verifier
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
   securitySchemes:
     User:
       type: http
