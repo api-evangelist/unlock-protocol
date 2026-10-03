@@ -235,41 +235,6 @@ paths:
       summary: Get exported keys
       x-summary-source: derived
 components:
-  parameters:
-    JobId:
-      in: path
-      name: jobId
-      required: true
-      description: Id of the exported job.
-      schema:
-        type: string
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
-  responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
   schemas:
     KeyMetadata:
       type: object
@@ -296,6 +261,41 @@ components:
         message:
           type: string
           default: resource not found
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    JobId:
+      in: path
+      name: jobId
+      required: true
+      description: Id of the exported job.
+      schema:
+        type: string
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
   securitySchemes:
     User:
       type: http

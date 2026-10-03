@@ -150,61 +150,7 @@ paths:
       summary: User
       x-summary-source: derived
 components:
-  responses:
-    200.GenericSuccess:
-      description: Successfully completed the request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericSuccess'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
   schemas:
-    GenericSuccess:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Successfully fulfilled the request.
-    Auth:
-      required:
-      - walletAddress
-      type: object
-      properties:
-        walletAddress:
-          type: string
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
     AuthResult:
       required:
       - accessToken
@@ -217,12 +163,66 @@ components:
           - 'null'
         accessToken:
           type: string
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
     GenericNotFound:
       type: object
       properties:
         message:
           type: string
           default: resource not found
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    Auth:
+      required:
+      - walletAddress
+      type: object
+      properties:
+        walletAddress:
+          type: string
+    GenericSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Successfully fulfilled the request.
+  responses:
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    200.GenericSuccess:
+      description: Successfully completed the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericSuccess'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
   securitySchemes:
     User:
       type: http

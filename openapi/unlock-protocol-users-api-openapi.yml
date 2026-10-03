@@ -338,50 +338,19 @@ paths:
       summary: Eject user
       x-summary-source: derived
 components:
-  schemas:
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
   responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    401.Unauthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
     401.NotAuthenticated:
       description: User is not authenticated.
       content:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GenericNotFound'
+            $ref: '#/components/schemas/GenericServerError'
     400.BadRequest:
       description: Bad Request.
       content:
@@ -392,6 +361,37 @@ components:
               error:
                 type: string
                 example: Bad request due to invalid input.
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    401.Unauthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
   securitySchemes:
     User:
       type: http

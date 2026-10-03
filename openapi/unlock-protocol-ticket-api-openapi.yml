@@ -374,22 +374,28 @@ paths:
       x-summary-source: derived
 components:
   responses:
-    409.Conflict:
-      description: There is a conflict. The resource already exist.
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GenericServerError'
+            $ref: '#/components/schemas/NotAuthenticated'
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    401.NotAuthenticated:
-      description: User is not authenticated.
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
       content:
-        application:
+        application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
     404.NotFound:
@@ -398,52 +404,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-  schemas:
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-    GenericSuccess:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Successfully fulfilled the request.
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
   parameters:
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     Network:
       in: path
       name: network
@@ -451,6 +412,13 @@ components:
       description: Network id.
       schema:
         type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
     Slug:
       in: path
       name: slug
@@ -458,6 +426,38 @@ components:
       description: Slug
       schema:
         type: string
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+    GenericSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Successfully fulfilled the request.
   securitySchemes:
     User:
       type: http

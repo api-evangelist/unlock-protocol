@@ -436,6 +436,12 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
     Verifier:
       type: object
       required:
@@ -453,12 +459,48 @@ components:
           type:
           - string
           - 'null'
-    GenericNotFound:
+    Event:
       type: object
+      required:
+      - name
+      - slug
+      - image
+      - description
+      - attributes
       properties:
-        message:
+        name:
           type: string
-          default: resource not found
+        slug:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - pending
+          - deployed
+        transactionHash:
+          type: string
+        eventType:
+          type: string
+          enum:
+          - unlock
+          - external
+          default: unlock
+        attributes:
+          type: array
+          items:
+            type: object
+            required:
+            - trait_type
+            - value
+            properties:
+              trait_type:
+                type: string
+              value:
+                type: string
     CheckoutConfig:
       type: object
       required:
@@ -505,60 +547,18 @@ components:
           type: string
         eventUrl:
           type: string
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    Event:
-      type: object
-      required:
-      - name
-      - slug
-      - image
-      - description
-      - attributes
-      properties:
-        name:
-          type: string
-        slug:
-          type: string
-        image:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-          enum:
-          - pending
-          - deployed
-        transactionHash:
-          type: string
-        eventType:
-          type: string
-          enum:
-          - unlock
-          - external
-          default: unlock
-        attributes:
-          type: array
-          items:
-            type: object
-            required:
-            - trait_type
-            - value
-            properties:
-              trait_type:
-                type: string
-              value:
-                type: string
     NotAuthenticated:
       type: object
       properties:
         message:
           type: string
           default: You are not authorized or authenticated to perform this action.
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
     GenericInvalidBodyError:
       type: object
       properties:
@@ -569,19 +569,36 @@ components:
           type:
           - string
           - 'null'
+  parameters:
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
+    VerifierAddress:
+      in: path
+      name: verifierAddress
+      required: true
+      description: User address to use as verifier
+      schema:
+        type: string
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
   responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
     404.NotFound:
       description: The item you are making request for does not exist.
       content:
@@ -594,10 +611,16 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
       content:
         application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
     204.Empty:
@@ -608,35 +631,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericInvalidBodyError'
-  parameters:
-    Slug:
-      in: path
-      name: slug
-      required: true
-      description: Slug
-      schema:
-        type: string
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    VerifierAddress:
-      in: path
-      name: verifierAddress
-      required: true
-      description: User address to use as verifier
-      schema:
-        type: string
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

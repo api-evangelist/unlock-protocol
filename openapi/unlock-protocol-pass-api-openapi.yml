@@ -67,13 +67,6 @@ paths:
       x-summary-source: derived
 components:
   parameters:
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
     Network:
       in: path
       name: network
@@ -88,13 +81,13 @@ components:
       description: Lock address.
       schema:
         type: string
-  responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
   schemas:
     GenericServerError:
       type: object
@@ -102,6 +95,13 @@ components:
         message:
           type: string
           default: There was an error in fullfiling the request.
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

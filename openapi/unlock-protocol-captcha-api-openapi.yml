@@ -69,13 +69,6 @@ paths:
       summary: Get data for recipients and captcha
       x-summary-source: derived
 components:
-  schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
   responses:
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
@@ -93,6 +86,13 @@ components:
               error:
                 type: string
                 example: Bad request due to invalid input.
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

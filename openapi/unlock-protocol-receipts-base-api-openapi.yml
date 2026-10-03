@@ -133,13 +133,6 @@ components:
           schema:
             $ref: '#/components/schemas/GenericServerError'
   parameters:
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     Network:
       in: path
       name: network
@@ -147,6 +140,13 @@ components:
       description: Network id.
       schema:
         type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
   schemas:
     GenericServerError:
       type: object

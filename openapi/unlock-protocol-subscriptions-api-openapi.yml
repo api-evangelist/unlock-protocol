@@ -94,14 +94,14 @@ paths:
       summary: Get subscription
       x-summary-source: derived
 components:
+  responses:
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   parameters:
-    KeyId:
-      in: path
-      name: keyId
-      required: true
-      description: Key Id.
-      schema:
-        type: string
     Network:
       in: path
       name: network
@@ -116,13 +116,13 @@ components:
       description: Lock address.
       schema:
         type: string
-  responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
+    KeyId:
+      in: path
+      name: keyId
+      required: true
+      description: Key Id.
+      schema:
+        type: string
   schemas:
     GenericServerError:
       type: object

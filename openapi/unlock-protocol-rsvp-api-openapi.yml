@@ -177,33 +177,7 @@ paths:
       summary: Deny attendees rsvp
       x-summary-source: derived
 components:
-  responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
   parameters:
-    UserAddress:
-      in: path
-      name: userAddress
-      required: true
-      description: User address.
-      schema:
-        type: string
     Network:
       in: path
       name: network
@@ -218,7 +192,20 @@ components:
       description: Lock address.
       schema:
         type: string
+    UserAddress:
+      in: path
+      name: userAddress
+      required: true
+      description: User address.
+      schema:
+        type: string
   schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
     Rsvp:
       type: object
       properties:
@@ -230,12 +217,12 @@ components:
           type: string
         network:
           type: number
-    GenericServerError:
+    GenericNotFound:
       type: object
       properties:
         message:
           type: string
-          default: There was an error in fullfiling the request.
+          default: resource not found
     GenericInvalidBodyError:
       type: object
       properties:
@@ -246,12 +233,25 @@ components:
           type:
           - string
           - 'null'
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
+  responses:
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
   securitySchemes:
     User:
       type: http

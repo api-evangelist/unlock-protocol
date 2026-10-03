@@ -383,28 +383,6 @@ paths:
       summary: Save receipt
       x-summary-source: derived
 components:
-  parameters:
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    Hash:
-      in: path
-      name: hash
-      required: true
-      description: Hash
-      schema:
-        type: string
   responses:
     401.NotAuthenticated:
       description: User is not authenticated.
@@ -412,6 +390,28 @@ components:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
+    Hash:
+      in: path
+      name: hash
+      required: true
+      description: Hash
+      schema:
+        type: string
   schemas:
     GenericServerError:
       type: object
