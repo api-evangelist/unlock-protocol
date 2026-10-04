@@ -138,24 +138,27 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    GenericServerError:
+    GenericInvalidBodyError:
       type: object
       properties:
         message:
           type: string
-          default: There was an error in fullfiling the request.
-    NotAuthenticated:
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    ApplicationBody:
       type: object
       properties:
-        message:
+        name:
           type: string
-          default: You are not authorized or authenticated to perform this action.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
+        key:
+          type:
+          - string
+          - 'null'
+        walletAddress:
           type: string
-          default: resource not found
     Application:
       type: object
       properties:
@@ -169,46 +172,43 @@ components:
           - 'null'
         walletAddress:
           type: string
-    GenericInvalidBodyError:
+    GenericNotFound:
       type: object
       properties:
         message:
           type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
+          default: resource not found
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
     GenericSuccess:
       type: object
       properties:
         message:
           type: string
           default: Successfully fulfilled the request.
-    ApplicationBody:
+    NotAuthenticated:
       type: object
       properties:
-        name:
+        message:
           type: string
-        key:
-          type:
-          - string
-          - 'null'
-        walletAddress:
-          type: string
+          default: You are not authorized or authenticated to perform this action.
   responses:
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
     400.Invalid:
       description: Invalid input received. Bad request.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericInvalidBodyError'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
       content:

@@ -132,6 +132,13 @@ components:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   parameters:
     Network:
       in: path
@@ -147,13 +154,6 @@ components:
       description: Lock address.
       schema:
         type: string
-  schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

@@ -235,32 +235,6 @@ paths:
       summary: Get exported keys
       x-summary-source: derived
 components:
-  schemas:
-    KeyMetadata:
-      type: object
-      properties:
-        token:
-          type: string
-        lockName:
-          type: string
-        lockAddress:
-          type: string
-        expiration:
-          type: integer
-        keyHolderAddress:
-          type: string
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
   parameters:
     Network:
       in: path
@@ -269,18 +243,18 @@ components:
       description: Network id.
       schema:
         type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     JobId:
       in: path
       name: jobId
       required: true
       description: Id of the exported job.
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
       schema:
         type: string
   responses:
@@ -296,6 +270,32 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
+  schemas:
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    KeyMetadata:
+      type: object
+      properties:
+        token:
+          type: string
+        lockName:
+          type: string
+        lockAddress:
+          type: string
+        expiration:
+          type: integer
+        keyHolderAddress:
+          type: string
   securitySchemes:
     User:
       type: http

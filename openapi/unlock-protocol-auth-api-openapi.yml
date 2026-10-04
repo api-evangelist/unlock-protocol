@@ -151,6 +151,34 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    GenericSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Successfully fulfilled the request.
     AuthResult:
       required:
       - accessToken
@@ -163,28 +191,6 @@ components:
           - 'null'
         accessToken:
           type: string
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
     Auth:
       required:
       - walletAddress
@@ -192,12 +198,6 @@ components:
       properties:
         walletAddress:
           type: string
-    GenericSuccess:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Successfully fulfilled the request.
   responses:
     400.Invalid:
       description: Invalid input received. Bad request.
@@ -211,18 +211,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    200.GenericSuccess:
-      description: Successfully completed the request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericSuccess'
     404.NotFound:
       description: The item you are making request for does not exist.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
+    200.GenericSuccess:
+      description: Successfully completed the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericSuccess'
   securitySchemes:
     User:
       type: http

@@ -176,19 +176,36 @@ paths:
       summary: Send event invites
       x-summary-source: derived
 components:
+  schemas:
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
     400.Invalid:
       description: Invalid input received. Bad request.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericInvalidBodyError'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
       content:
@@ -203,13 +220,6 @@ components:
       description: Network id.
       schema:
         type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     Slug:
       in: path
       name: slug
@@ -224,23 +234,13 @@ components:
       description: Template id for email
       schema:
         type: string
-  schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
   securitySchemes:
     User:
       type: http

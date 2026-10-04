@@ -435,30 +435,73 @@ paths:
       summary: Save external event data
       x-summary-source: derived
 components:
+  responses:
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    204.Empty:
+      description: No response. Request acknowledged.
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
   schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    Verifier:
+    CheckoutConfig:
       type: object
       required:
-      - address
+      - config
+      - name
       properties:
-        address:
+        id:
           type: string
-        lockAddress:
-          type: string
-        lockManager:
-          type: string
-        network:
-          type: integer
         name:
-          type:
-          - string
-          - 'null'
+          type: string
+        by:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+          required:
+          - locks
+          properties:
+            locks:
+              type: object
+              additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     Event:
       type: object
       required:
@@ -501,33 +544,22 @@ components:
                 type: string
               value:
                 type: string
-    CheckoutConfig:
+    GenericInvalidBodyError:
       type: object
-      required:
-      - config
-      - name
       properties:
-        id:
+        message:
           type: string
-        name:
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    GenericServerError:
+      type: object
+      properties:
+        message:
           type: string
-        by:
-          type: string
-        config:
-          type: object
-          additionalProperties: true
-          required:
-          - locks
-          properties:
-            locks:
-              type: object
-              additionalProperties: true
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
+          default: There was an error in fullfiling the request.
     EventDetails:
       type: object
       properties:
@@ -547,25 +579,32 @@ components:
           type: string
         eventUrl:
           type: string
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
     GenericNotFound:
       type: object
       properties:
         message:
           type: string
           default: resource not found
-    GenericInvalidBodyError:
+    NotAuthenticated:
       type: object
       properties:
         message:
           type: string
-          default: Response body schema is invalid.
-        error:
+          default: You are not authorized or authenticated to perform this action.
+    Verifier:
+      type: object
+      required:
+      - address
+      properties:
+        address:
+          type: string
+        lockAddress:
+          type: string
+        lockManager:
+          type: string
+        network:
+          type: integer
+        name:
           type:
           - string
           - 'null'
@@ -575,13 +614,6 @@ components:
       name: lockAddress
       required: true
       description: Lock address.
-      schema:
-        type: string
-    Slug:
-      in: path
-      name: slug
-      required: true
-      description: Slug
       schema:
         type: string
     VerifierAddress:
@@ -598,45 +630,13 @@ components:
       description: Network id.
       schema:
         type: integer
-  responses:
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
-    409.Conflict:
-      description: There is a conflict. The resource already exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    204.Empty:
-      description: No response. Request acknowledged.
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
+    Slug:
+      in: path
+      name: slug
+      required: true
+      description: Slug
+      schema:
+        type: string
   securitySchemes:
     User:
       type: http

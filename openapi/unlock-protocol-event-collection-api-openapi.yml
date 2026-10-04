@@ -459,30 +459,75 @@ paths:
       summary: Get event collections by manager
       x-summary-source: derived
 components:
+  responses:
+    400.Invalid:
+      description: Invalid input received. Bad request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericInvalidBodyError'
+    403.Forbidden:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    403.NotAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
+    401.NotAuthenticated:
+      description: User is not authenticated.
+      content:
+        application:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
+    404.NotFound:
+      description: The item you are making request for does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericNotFound'
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
   schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    RemoveManagerBody:
+    RemoveEventBody:
       type: object
       required:
-      - managerAddressToRemove
+      - eventSlug
       properties:
-        managerAddressToRemove:
+        eventSlug:
           type: string
-    BulkApproveEventsBody:
+          description: Slug of the event to remove.
+    EventCollectionAssociation:
       type: object
-      required:
-      - eventSlugs
       properties:
-        eventSlugs:
-          type: array
-          description: Array of event slugs to approve.
-          items:
-            type: string
+        id:
+          type: integer
+        eventSlug:
+          type: string
+        collectionSlug:
+          type: string
+        isApproved:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     Event:
       type: object
       required:
@@ -525,13 +570,69 @@ components:
                 type: string
               value:
                 type: string
-    AddManagerBody:
+    EventsInCollection:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        totalCount:
+          type: integer
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+    BulkApproveEventsBody:
       type: object
       required:
-      - newManagerAddress
+      - eventSlugs
       properties:
-        newManagerAddress:
+        eventSlugs:
+          type: array
+          description: Array of event slugs to approve.
+          items:
+            type: string
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
           type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    BulkRemoveEventsBody:
+      type: object
+      required:
+      - eventSlugs
+      properties:
+        eventSlugs:
+          type: array
+          description: Array of event slugs to remove.
+          items:
+            type: string
+    AddEventToCollectionBody:
+      type: object
+      required:
+      - eventSlug
+      properties:
+        eventSlug:
+          type: string
+    RemoveManagerBody:
+      type: object
+      required:
+      - managerAddressToRemove
+      properties:
+        managerAddressToRemove:
+          type: string
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
     EventCollection:
       type: object
       properties:
@@ -563,44 +664,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Event'
-    EventCollectionAssociation:
-      type: object
-      properties:
-        id:
-          type: integer
-        eventSlug:
-          type: string
-        collectionSlug:
-          type: string
-        isApproved:
-          type: boolean
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-    AddEventToCollectionBody:
-      type: object
-      required:
-      - eventSlug
-      properties:
-        eventSlug:
-          type: string
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
-    RemoveEventBody:
-      type: object
-      required:
-      - eventSlug
-      properties:
-        eventSlug:
-          type: string
-          description: Slug of the event to remove.
     EventCollectionBody:
       type: object
       required:
@@ -629,6 +692,19 @@ components:
           type: array
           items:
             type: string
+    AddManagerBody:
+      type: object
+      required:
+      - newManagerAddress
+      properties:
+        newManagerAddress:
+          type: string
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
     ApproveEventBody:
       type: object
       required:
@@ -637,88 +713,12 @@ components:
         eventSlug:
           type: string
           description: Slug of the event to approve.
-    GenericNotFound:
+    NotAuthenticated:
       type: object
       properties:
         message:
           type: string
-          default: resource not found
-    BulkRemoveEventsBody:
-      type: object
-      required:
-      - eventSlugs
-      properties:
-        eventSlugs:
-          type: array
-          description: Array of event slugs to remove.
-          items:
-            type: string
-    EventsInCollection:
-      type: object
-      properties:
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event'
-        totalCount:
-          type: integer
-        currentPage:
-          type: integer
-        totalPages:
-          type: integer
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
-  responses:
-    403.NotAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    403.Forbidden:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    404.NotFound:
-      description: The item you are making request for does not exist.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericNotFound'
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
-    401.NotAuthenticated:
-      description: User is not authenticated.
-      content:
-        application:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
-    400.Invalid:
-      description: Invalid input received. Bad request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericInvalidBodyError'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
+          default: You are not authorized or authenticated to perform this action.
   securitySchemes:
     User:
       type: http

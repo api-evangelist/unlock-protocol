@@ -61,18 +61,6 @@ components:
       schema:
         type: integer
   schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
     LockContractOptions:
       type: object
       properties:
@@ -100,6 +88,18 @@ components:
           type:
           - number
           - 'null'
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   responses:
     500.InternalError:
       description: Unable to fullfil request due to internal server error.

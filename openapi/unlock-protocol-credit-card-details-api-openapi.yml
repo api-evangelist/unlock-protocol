@@ -36,13 +36,6 @@ paths:
       x-summary-source: derived
 components:
   parameters:
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     Network:
       in: path
       name: network
@@ -50,6 +43,13 @@ components:
       description: Network id.
       schema:
         type: integer
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
   securitySchemes:
     User:
       type: http

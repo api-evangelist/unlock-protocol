@@ -88,13 +88,6 @@ components:
       description: Key Id.
       schema:
         type: string
-  schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
   responses:
     500.InternalError:
       description: Unable to fullfil request due to internal server error.
@@ -102,6 +95,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
+  schemas:
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   securitySchemes:
     User:
       type: http

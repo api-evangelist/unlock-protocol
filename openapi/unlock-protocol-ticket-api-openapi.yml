@@ -374,10 +374,10 @@ paths:
       x-summary-source: derived
 components:
   responses:
-    401.NotAuthenticated:
-      description: User is not authenticated.
+    409.Conflict:
+      description: There is a conflict. The resource already exist.
       content:
-        application:
+        application/json:
           schema:
             $ref: '#/components/schemas/GenericServerError'
     403.NotAuthenticatedOrAuthorized:
@@ -386,14 +386,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/NotAuthenticated'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
+    401.NotAuthenticated:
+      description: User is not authenticated.
       content:
-        application/json:
+        application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-    409.Conflict:
-      description: There is a conflict. The resource already exist.
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
       content:
         application/json:
           schema:
@@ -412,18 +412,18 @@ components:
       description: Network id.
       schema:
         type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     Slug:
       in: path
       name: slug
       required: true
       description: Slug
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
       schema:
         type: string
     KeyId:
@@ -434,30 +434,30 @@ components:
       schema:
         type: string
   schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
     GenericNotFound:
       type: object
       properties:
         message:
           type: string
           default: resource not found
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
     GenericSuccess:
       type: object
       properties:
         message:
           type: string
           default: Successfully fulfilled the request.
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
   securitySchemes:
     User:
       type: http

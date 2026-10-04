@@ -177,35 +177,23 @@ paths:
       summary: Deny attendees rsvp
       x-summary-source: derived
 components:
-  parameters:
-    Network:
-      in: path
-      name: network
-      required: true
-      description: Network id.
-      schema:
-        type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
-    UserAddress:
-      in: path
-      name: userAddress
-      required: true
-      description: User address.
-      schema:
-        type: string
   schemas:
-    GenericServerError:
+    GenericInvalidBodyError:
       type: object
       properties:
         message:
           type: string
-          default: There was an error in fullfiling the request.
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
     Rsvp:
       type: object
       properties:
@@ -217,22 +205,12 @@ components:
           type: string
         network:
           type: number
-    GenericNotFound:
+    GenericServerError:
       type: object
       properties:
         message:
           type: string
-          default: resource not found
-    GenericInvalidBodyError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
+          default: There was an error in fullfiling the request.
   responses:
     400.Invalid:
       description: Invalid input received. Bad request.
@@ -252,6 +230,28 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
+  parameters:
+    Network:
+      in: path
+      name: network
+      required: true
+      description: Network id.
+      schema:
+        type: integer
+    UserAddress:
+      in: path
+      name: userAddress
+      required: true
+      description: User address.
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
   securitySchemes:
     User:
       type: http
