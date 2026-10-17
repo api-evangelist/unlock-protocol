@@ -42,6 +42,19 @@ paths:
       summary: Generate certificate
       x-summary-source: derived
 components:
+  schemas:
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
   parameters:
     Network:
       in: path
@@ -50,13 +63,6 @@ components:
       description: Network id.
       schema:
         type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     KeyId:
       in: path
       name: keyId
@@ -64,32 +70,26 @@ components:
       description: Key Id.
       schema:
         type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
+      schema:
+        type: string
   responses:
-    403.NotAuthenticatedOrAuthorized:
-      description: User is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotAuthenticated'
     401.NotAuthenticated:
       description: User is not authenticated.
       content:
         application:
           schema:
             $ref: '#/components/schemas/GenericServerError'
-  schemas:
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
+    403.NotAuthenticatedOrAuthorized:
+      description: User is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotAuthenticated'
   securitySchemes:
     User:
       type: http

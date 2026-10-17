@@ -138,16 +138,18 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    GenericInvalidBodyError:
+    GenericNotFound:
       type: object
       properties:
         message:
           type: string
-          default: Response body schema is invalid.
-        error:
-          type:
-          - string
-          - 'null'
+          default: resource not found
+    NotAuthenticated:
+      type: object
+      properties:
+        message:
+          type: string
+          default: You are not authorized or authenticated to perform this action.
     ApplicationBody:
       type: object
       properties:
@@ -159,6 +161,16 @@ components:
           - 'null'
         walletAddress:
           type: string
+    GenericInvalidBodyError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Response body schema is invalid.
+        error:
+          type:
+          - string
+          - 'null'
     Application:
       type: object
       properties:
@@ -172,12 +184,6 @@ components:
           - 'null'
         walletAddress:
           type: string
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
     GenericServerError:
       type: object
       properties:
@@ -190,13 +196,13 @@ components:
         message:
           type: string
           default: Successfully fulfilled the request.
-    NotAuthenticated:
-      type: object
-      properties:
-        message:
-          type: string
-          default: You are not authorized or authenticated to perform this action.
   responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
     400.Invalid:
       description: Invalid input received. Bad request.
       content:
@@ -209,12 +215,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/NotAuthenticated'
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
     404.NotFound:
       description: The item you are making request for does not exist.
       content:

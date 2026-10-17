@@ -70,12 +70,6 @@ paths:
       x-summary-source: derived
 components:
   responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
     400.BadRequest:
       description: Bad Request.
       content:
@@ -86,6 +80,12 @@ components:
               error:
                 type: string
                 example: Bad request due to invalid input.
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   schemas:
     GenericServerError:
       type: object

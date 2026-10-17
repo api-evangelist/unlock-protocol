@@ -74,18 +74,18 @@ components:
       description: Network id.
       schema:
         type: integer
-    LockAddress:
-      in: path
-      name: lockAddress
-      required: true
-      description: Lock address.
-      schema:
-        type: string
     KeyId:
       in: path
       name: keyId
       required: true
       description: Key Id.
+      schema:
+        type: string
+    LockAddress:
+      in: path
+      name: lockAddress
+      required: true
+      description: Lock address.
       schema:
         type: string
   responses:

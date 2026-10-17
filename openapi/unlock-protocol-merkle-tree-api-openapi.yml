@@ -93,13 +93,6 @@ paths:
       summary: Save merkle tree
       x-summary-source: derived
 components:
-  responses:
-    500.InternalError:
-      description: Unable to fullfil request due to internal server error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericServerError'
   schemas:
     GenericServerError:
       type: object
@@ -107,6 +100,13 @@ components:
         message:
           type: string
           default: There was an error in fullfiling the request.
+  responses:
+    500.InternalError:
+      description: Unable to fullfil request due to internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericServerError'
   securitySchemes:
     User:
       type: http

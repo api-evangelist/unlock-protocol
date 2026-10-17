@@ -235,6 +235,32 @@ paths:
       summary: Get exported keys
       x-summary-source: derived
 components:
+  schemas:
+    GenericNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          default: resource not found
+    GenericServerError:
+      type: object
+      properties:
+        message:
+          type: string
+          default: There was an error in fullfiling the request.
+    KeyMetadata:
+      type: object
+      properties:
+        token:
+          type: string
+        lockName:
+          type: string
+        lockAddress:
+          type: string
+        expiration:
+          type: integer
+        keyHolderAddress:
+          type: string
   parameters:
     Network:
       in: path
@@ -270,32 +296,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericNotFound'
-  schemas:
-    GenericNotFound:
-      type: object
-      properties:
-        message:
-          type: string
-          default: resource not found
-    GenericServerError:
-      type: object
-      properties:
-        message:
-          type: string
-          default: There was an error in fullfiling the request.
-    KeyMetadata:
-      type: object
-      properties:
-        token:
-          type: string
-        lockName:
-          type: string
-        lockAddress:
-          type: string
-        expiration:
-          type: integer
-        keyHolderAddress:
-          type: string
   securitySchemes:
     User:
       type: http
