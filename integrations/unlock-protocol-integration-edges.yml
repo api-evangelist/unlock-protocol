@@ -1,0 +1,94 @@
+edges:
+- partner_name: npm registry
+  partner: npm
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (JavaScript/TypeScript)
+  evidence: https://www.npmjs.com/package/@unlock-protocol/contracts
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@unlock-protocol/contracts'
+      version: 0.0.35
+      released: '2025-04-15'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@unlock-protocol/contracts
+      repo_leg: github-org:unlock-protocol
+      publisher_leg: email:unlock-protocol.com
+      matched_by: domain
+    - name: '@unlock-protocol/hardhat-plugin'
+      version: 0.2.3
+      released: '2024-10-15'
+      released_field: modified
+      lapsed: true
+      page: https://www.npmjs.com/package/@unlock-protocol/hardhat-plugin
+      repo_leg: github-org:unlock-protocol
+      publisher_leg: email:unlock-protocol.com
+      matched_by: domain
+    - name: '@unlock-protocol/networks'
+      version: 0.0.25
+      released: '2024-12-12'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@unlock-protocol/networks
+      repo_leg: github-org:unlock-protocol
+      publisher_leg: email:unlock-protocol.com
+      matched_by: domain
+    - name: '@unlock-protocol/paywall'
+      version: 0.8.1
+      released: '2024-11-26'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@unlock-protocol/paywall
+      repo_leg: github-org:unlock-protocol
+      publisher_leg: email:unlock-protocol.com
+      matched_by: domain
+    - name: '@unlock-protocol/ui'
+      version: 0.4.9
+      released: '2023-07-27'
+      released_field: modified
+      lapsed: true
+      page: https://www.npmjs.com/package/@unlock-protocol/ui
+      repo_leg: github-org:unlock-protocol
+      publisher_leg: email:unlock-protocol.com
+      matched_by: domain
+    - name: '@unlock-protocol/unlock-js'
+      version: 0.51.2
+      released: '2025-02-26'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@unlock-protocol/unlock-js
+      repo_leg: github-org:unlock-protocol
+      publisher_leg: email:unlock-protocol.com
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
+generated: '2026-10-18'
+method: searched
+source:
+- https://api.nuget.org/v3
+- https://crates.io/api/v1
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.npmjs.org
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1
+checked:
+- https://api.nuget.org/v3
+- https://crates.io/api/v1
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.npmjs.org
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1
